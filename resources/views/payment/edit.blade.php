@@ -43,28 +43,45 @@
                             </form>
                         </div>
                     </div>
-                    @if($payment->tags->isNotEmpty())
-                        <div class="card">
-                            <div class="card-header">
-                                Tags
-                            </div>
-                            <div class="card-body">
-                            @foreach ($payment->tags as $tag)
-                                {{ $tag }}
-                            @endforeach
-                        </div>
+                    @if($payment->tags && $payment->tags->isNotEmpty())
+                        @foreach ($payment->tags as $tag)
+                            {{ $tag }}
+                        @endforeach
                     @endif
-                    @if($payment->codes->isNotEmpty())
-                        <div class="card">
-                            <div class="card-header">
-                                Codes
-                            </div>
-                            <div class="card-body">
-                            @foreach ($payment->codes as $code)
-                                {{ $parent }}
-                            @endforeach
-                        </div>
-                    @endif
+                    <table class="table">
+                        <tbody>
+                            @if($payment->codes && $payment->codes->isNotEmpty())
+                                @foreach ($payment->codes as $code)
+                                    <tr>
+                                        <td>{{ $code->code }}</td>
+                                        <td>{{ $code->pivot->amount}}</td>
+                                        <td>{{ $code->pivot->quantity}}</td>
+                                        <td>{{ $code->pivot->subtotal}}</td>
+                                    </tr>
+                                @endforeach
+                            @endif
+                            @if($payment->items && $payment->items->isNotEmpty())
+                                @foreach ($payment->items as $item)
+                                    <tr>
+                                        <td>{{ $item->item }}</td>
+                                        <td>{{ $item->pivot->amount}}</td>
+                                        <td>{{ $item->pivot->quantity}}</td>
+                                        <td>{{ $item->pivot->subtotal}}</td>
+                                    </tr>
+                                @endforeach
+                            @endif
+                            @if($payment->services && $payment->services->isNotEmpty())
+                                @foreach ($payment->services as $service)
+                                    <tr>
+                                        <td>{{ $service->service }}</td>
+                                        <td>{{ $service->pivot->amount}}</td>
+                                        <td>{{ $service->pivot->quantity}}</td>
+                                        <td>{{ $service->pivot->subtotal}}</td>
+                                    </tr>
+                                @endforeach
+                            @endif
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

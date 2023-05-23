@@ -21,14 +21,18 @@
                         <table id="myTable" class="table table-bordered table-striped table-hover">
                             <thead>
                                 <tr>
-                                    <th>Payment</th>
+                                    <th>Currency</th>
+                                    <th>Company</th>
+                                    <th>Total</th>
                                     <th>Created</th>
                                     <th></th>
                                 </tr>
                             </thead>
                             <tfoot>
                                 <tr>
-                                    <th>Payment</th>
+                                    <th>Currency</th>
+                                    <th>Company</th>
+                                    <th>Total</th>
                                     <th>Created</th>
                                     <th></th>
                                 </tr>
@@ -44,9 +48,7 @@
 
 @push('js')
     <script>
-        
         $(document).ready( function () {
-
             var table = $('#myTable').DataTable({
                 ajax: {
                     url: 'api/payment',
@@ -54,12 +56,14 @@
                     headers: { 'Authorization': 'Bearer '+localStorage.getItem('token') }
                 },
                 columns: [
-                    { data: 'payment' },
+                    { data: 'currency' },
+                    { data: 'company' },
+                    { data: 'total' },
                     { data: 'created_at' },
                     {
                         render: function ( data, type, row, meta ) {
-                            return '<a href="'+route('payment.edit',row.payment)+'" class="btn btn-sm btn-warning"><i class="fa fa-trash"></i></a>'+
-                            '<form action="'+route('payment.destroy',row.payment)+'" method="post"> @csrf'+
+                            return '<a href="'+route('payment.edit',row.id)+'" class="btn btn-sm btn-warning"><i class="fa fa-trash"></i></a>'+
+                            '<form action="'+route('payment.destroy',row.id)+'" method="post"> @csrf'+
                             '<input type="hidden" name="_method" value="DELETE" >'+
                             '<button class="btn btn-sm btn-danger" type="submit"><i class="fa fa-trash"></i></button></form>'
                         },

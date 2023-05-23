@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 class Payment extends Model
 {
     use HasFactory;
-    protected $fillable = ['company_id','currency_id'];
+    protected $fillable = ['company_id','currency_id','total'];
 
     /**
      * Get the company that owns the payment.
@@ -40,7 +40,7 @@ class Payment extends Model
     /**
      * Get all of the codes of this payment.
      */
-    public function codes_payment(): MorphMany
+    public function codes_of_payment(): MorphMany
     {
         return $this->morphMany(Code::class, 'codeable');
     }
@@ -50,7 +50,7 @@ class Payment extends Model
      */
     public function types(): MorphToMany
     {
-        return $this->morphedByMany(Type::class, 'paymentable');
+        return $this->morphedByMany(Type::class, 'paymentable')->withPivot('amount','quantity','subtotal');
     }
 
     /**
@@ -58,7 +58,15 @@ class Payment extends Model
      */
     public function services(): MorphToMany
     {
-        return $this->morphedByMany(Service::class, 'paymentable');
+        return $this->morphedByMany(Service::class, 'paymentable')->withPivot('amount','quantity','subtotal');
+    }
+
+    /**
+     * Get all of the brands that are assigned this payment.
+     */
+    public function items(): MorphToMany
+    {
+        return $this->morphedByMany(Item::class, 'paymentable')->withPivot('amount','quantity','subtotal');
     }
 
     /**
@@ -66,6 +74,6 @@ class Payment extends Model
      */
     public function codes_paid(): MorphToMany
     {
-        return $this->morphedByMany(Code::class, 'paymentable');
+        return $this->morphedByMany(Code::class, 'paymentable')->withPivot('amount','quantity','subtotal');
     }
 }
