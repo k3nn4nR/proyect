@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('payment_id');
             $table->morphs('paymentable');
             $table->string('amount');
-            $table->string('quantity');
+            $table->string('price');
             $table->string('subtotal');
             $table->timestamps();
             $table->foreign('payment_id')->references('id')->on('payments');

@@ -50,7 +50,7 @@ class Payment extends Model
      */
     public function types(): MorphToMany
     {
-        return $this->morphedByMany(Type::class, 'paymentable')->withPivot('amount','quantity','subtotal');
+        return $this->morphedByMany(Type::class, 'paymentable')->withPivot('amount','price','subtotal');
     }
 
     /**
@@ -58,7 +58,7 @@ class Payment extends Model
      */
     public function services(): MorphToMany
     {
-        return $this->morphedByMany(Service::class, 'paymentable')->withPivot('amount','quantity','subtotal');
+        return $this->morphedByMany(Service::class, 'paymentable')->withPivot('amount','price','subtotal');
     }
 
     /**
@@ -66,7 +66,7 @@ class Payment extends Model
      */
     public function items(): MorphToMany
     {
-        return $this->morphedByMany(Item::class, 'paymentable')->withPivot('amount','quantity','subtotal');
+        return $this->morphedByMany(Item::class, 'paymentable')->withPivot('amount','price','subtotal');
     }
 
     /**
@@ -74,6 +74,6 @@ class Payment extends Model
      */
     public function codes_paid(): MorphToMany
     {
-        return $this->morphedByMany(Code::class, 'paymentable')->withPivot('amount','quantity','subtotal');
+        return $this->morphedByMany(Code::class, 'paymentable')->withPivot('amount','price','subtotal');
     }
 }

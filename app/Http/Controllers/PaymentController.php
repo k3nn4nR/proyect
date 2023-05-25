@@ -46,31 +46,6 @@ class PaymentController extends Controller
      */
     public function store(PaymentStoreRequest $request)
     {
-        $services_insert = collect([]);
-        $items_insert = collect([]);
-        $sum_items = 0;
-        $sum_services = 0;
-        if($request->input('services')){
-            foreach($request->input('services') as $service){
-                $services_insert->push(Service::where('service',$service)->get()->first());
-            }
-        }
-        if($request->input('items')){
-            foreach($request->input('items') as $item){
-                $items_insert->push(Item::where('item',$item)->get()->first());
-            }
-        }
-        dd($items_insert);
-
-        // foreach($shop->products as $product) {
-        //     $event = Event::create([]);
-        //     $service = Service::create([]);
-          
-        //     $product->productable()->saveMany([
-        //       $event, $service
-        //     ]);
-        //   }
-          
         DB::beginTransaction();
         try {
             $company = Company::where('company',$request->input('company'))->get()->first();
@@ -78,8 +53,32 @@ class PaymentController extends Controller
             $payment = Payment::create([
                 'company_id' => $company->id,
                 'currency_id' => $currency->id,
+                'total' => $request->input('total'),
             ]);
-            $payment->
+            $position = 0;
+            if($request->input('services')){
+                foreach($request->input('services') as $service){
+                    $service_insert = Service::where('service',$service)->get()->first();
+                    $payment->services()->save($service_insert, [
+                        'amount' => $request->input('services_amount')[$position],
+                        'price' => $request->input('services_price')[$position],
+                        'subtotal' => $request->input('services_subtotal')[$position],
+                    ]);
+                    $position++;
+                }
+            }
+            $position = 0;
+            if($request->input('items')){
+                foreach($request->input('items') as $item){
+                    $item_insert = Item::where('item',$item)->get()->first();
+                    $payment->items()->save($item_insert, [
+                        'amount' => $request->input('items_amount')[$position],
+                        'price' => $request->input('items_price')[$position],
+                        'subtotal' => $request->input('items_subtotal')[$position],
+                    ]);
+                    $position++;
+                }
+            }
             DB::commit();
             event(new PaymentRegisteredEvent('Payment Registered'));
             if(!$request->header('Authorization'))
@@ -117,9 +116,12 @@ class PaymentController extends Controller
     {
         DB::beginTransaction();
         try {
+            $company = Company::where('company',$request->input('company'))->get()->first();
+            $currency = Currency::where('currency',$request->input('currency'))->get()->first();
             $payment->update([
-                'company_id' => $request->input('company_id'),
-                'currency_id' => $request->input('currency_id')
+                'company_id' => $company->id,
+                'currency_id' => $currency->id,
+                'total' => $request->input('total'),
             ]);
             DB::commit();
             event(new PaymentRegisteredEvent('Payment Updated'));

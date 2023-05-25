@@ -20,15 +20,6 @@
                 <div class="card-body">
                     <form id="form" method="POST" action="{{ route('payment.store') }}">
                         @csrf
-                        @if ($errors->any())
-                            <div class="alert alert-danger">
-                                <ul>
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif
                         <div class="form-group row">
                             <div class="col-md-6">
                                 <label for="currency_select">{{ __('Currency') }}</label>
@@ -56,7 +47,7 @@
                         <div class="form-group row">
                             <div class="col-md-3">
                                 <label for="total">{{ __('Total') }}</label>
-                                <input type="text" name="total" id="total" disabled>
+                                <input type="text" name="total" id="total">
                             </div>
                             <div class="col-md-9">
                                 <button class="btn btn-success col-md-3" id="add-item-row" onclick="event.preventDefault();">Add Item</button>
@@ -88,9 +79,9 @@
                                                 </span>
                                             @enderror
                                         </td>
-                                        <td><input type="number" name="items_ammount[]" onchange="updateSubtotal($(this),this)"></td>
+                                        <td><input type="number" name="items_amount[]" onchange="updateSubtotal($(this),this)"></td>
                                         <td><input type="number" name="items_price[]" onchange="updateSubtotal($(this),this)"></td>
-                                        <td><input type="number" name="items_subtotal[]" disabled ></td>
+                                        <td><input type="number" name="items_subtotal[]"></td>
                                     </tr>
                                     <tr>
                                         <td><input type="checkbox" id="select-row"></td>
@@ -99,9 +90,9 @@
                                                 <option>Choose One..</option>
                                             </select>
                                         </td>
-                                        <td><input type="number" name="services_ammount[]" onchange="updateSubtotal($(this),this)"></td>
+                                        <td><input type="number" name="services_amount[]" onchange="updateSubtotal($(this),this)"></td>
                                         <td><input type="number" name="services_price[]" onchange="updateSubtotal($(this),this)"></td>
-                                        <td><input type="number" name="services_subtotal[]" disabled ></td>
+                                        <td><input type="number" name="services_subtotal[]"></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -138,9 +129,9 @@
                     '<tr>'+
                         '<td><input type="checkbox" id="select-row"></td>'+
                         '<td>'+items+'</td>'+
-                        '<td><input type="number" name="items_ammount[]" onchange="updateSubtotal($(this),this)"></td>'+
+                        '<td><input type="number" name="items_amount[]" onchange="updateSubtotal($(this),this)"></td>'+
                         '<td><input type="number" name="items_price[]" onchange="updateSubtotal($(this),this)"></td>'+
-                        '<td><input type="number" name="items_subtotal[]" disabled ></td>'+
+                        '<td><input type="number" name="items_subtotal[]"></td>'+
                     '</tr>'
                 );
             })
@@ -150,9 +141,9 @@
                     '<tr>'+
                         '<td><input type="checkbox" id="select-row"></td>'+
                         '<td>'+services+'</td>'+
-                        '<td><input type="number" name="services_ammount[]" onchange="updateSubtotal($(this),this)"></td>'+
+                        '<td><input type="number" name="services_amount[]" onchange="updateSubtotal($(this),this)"></td>'+
                         '<td><input type="number" name="services_price[]" onchange="updateSubtotal($(this),this)"></td>'+
-                        '<td><input type="number" name="services_subtotal[]" disabled ></td>'+
+                        '<td><input type="number" name="services_subtotal[]"></td>'+
                     '</tr>'
                 );
             })
@@ -243,7 +234,7 @@
                 headers: headers,
                 success: function (response) {
                     var select = $('#items_select');
-                    items = '<select class="form-control" id="services_select" name="services[]"><option>Choose One..</option>'
+                    items = '<select class="form-control" id="items_select" name="items[]"><option>Choose One..</option>'
                     for (var i = 0; i < response.data.length; i++){
                         var added = document.createElement('option');
                         added.value = response.data[i].item;
