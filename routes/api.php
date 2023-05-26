@@ -56,6 +56,12 @@ Route::middleware('auth:sanctum')->group(function () {
         });
     });
 
+    Route::name('inventory.')->group(function () {
+        Route::controller(App\Http\Controllers\InventoryController::class)->group(function () {
+            Route::get('/inventory', 'api_index')->name('api_index');
+        });
+    });
+
     Route::name('payment.')->group(function () {
         Route::controller(App\Http\Controllers\PaymentController::class)->group(function () {
             Route::get('/payment', 'api_index')->name('api_index');
@@ -81,6 +87,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::controller(App\Http\Controllers\TypeController::class)->group(function () {
             Route::get('/type', 'api_index')->name('api_index');
             Route::post('/type', 'store')->name('api_store');
+        });
+    });
+
+    Route::name('warehouse.')->group(function () {
+        Route::controller(App\Http\Controllers\WarehouseController::class)->group(function () {
+            Route::get('/warehouse', 'api_index')->name('api_index');
+            Route::post('/warehouse', 'store')->name('api_store');
         });
     });
 });

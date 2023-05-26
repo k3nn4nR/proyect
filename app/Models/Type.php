@@ -45,4 +45,12 @@ class Type extends Model
     {
         return $this->morphToMany(Payment::class, 'paymentable');
     }
+
+        /**
+     * Get all of the codes type.
+     */
+    public function inventories(): MorphMany
+    {
+        return $this->morphMany(Inventory::class, 'inventoryable');
+    }
 }

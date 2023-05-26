@@ -31,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::resource('service', App\Http\Controllers\ServiceController::class);
     Route::resource('tag', App\Http\Controllers\TagController::class);
     Route::resource('type', App\Http\Controllers\TypeController::class);
+    Route::resource('warehouse', App\Http\Controllers\WarehouseController::class);
 
     Route::name('brand.')->group(function () {
         Route::controller(App\Http\Controllers\BrandController::class)->group(function () {
@@ -57,6 +58,12 @@ Route::middleware('auth:sanctum')->group(function () {
         });
     });
 
+    Route::name('inventory.')->group(function () {
+        Route::controller(App\Http\Controllers\InventoryController::class)->group(function () {
+            Route::get('/inventory', 'index')->name('index');
+        });
+    });
+
     Route::name('payment.')->group(function () {
         Route::controller(App\Http\Controllers\PaymentController::class)->group(function () {
         });
@@ -74,6 +81,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::name('type.')->group(function () {
         Route::controller(App\Http\Controllers\TypeController::class)->group(function () {
+        });
+    });
+
+    Route::name('warehouse.')->group(function () {
+        Route::controller(App\Http\Controllers\WarehouseController::class)->group(function () {
         });
     });
 });

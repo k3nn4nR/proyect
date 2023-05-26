@@ -311,6 +311,27 @@ return [
             'icon'    => 'fas fa-fw fa-warehouse',
             'submenu' => [
                 [
+                    'text'    => 'Inventory',
+                    'icon'    => 'fas fa-fw fa-cash-register',
+                    'url'  => 'inventory',
+                ],
+                [
+                    'text'    => 'Warehouses',
+                    'icon'    => 'fas fa-fw fa-cubes',
+                    'submenu' => [
+                        [
+                            'text' => 'List',
+                            'url'  => 'warehouse',
+                            'icon'    => 'fas fa-fw fa-minus',
+                        ],
+                        [
+                            'text' => 'Create',
+                            'url'  => 'warehouse/create',
+                            'icon'    => 'fas fa-fw fa-minus',
+                        ],
+                    ],
+                ],
+                [
                     'text'    => 'Item',
                     'icon'    => 'fas fa-fw fa-cubes',
                     'submenu' => [

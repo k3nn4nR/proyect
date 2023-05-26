@@ -146,6 +146,14 @@
                     title: e.message
                 })
             });
+
+            Echo.channel('warehouse-registered')
+            .listen('WarehouseRegisteredEvent', (e)=>{
+                Toast.fire({
+                    type: 'success',
+                    title: e.message
+                })
+            });
         });
     </script>
 @stop
