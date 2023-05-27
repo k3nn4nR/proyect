@@ -308,16 +308,16 @@ return [
         ],
         [
             'text'    => 'Logistics',
-            'icon'    => 'fas fa-fw fa-warehouse',
+            'icon'    => 'fas fa-dolly-flatbed',
             'submenu' => [
                 [
                     'text'    => 'Inventory',
-                    'icon'    => 'fas fa-fw fa-cash-register',
+                    'icon'    => 'fas fa-clipboard-list',
                     'url'  => 'inventory',
                 ],
                 [
                     'text'    => 'Warehouses',
-                    'icon'    => 'fas fa-fw fa-cubes',
+                    'icon'    => 'fas fa-fw fa-warehouse',
                     'submenu' => [
                         [
                             'text' => 'List',
@@ -332,7 +332,23 @@ return [
                     ],
                 ],
                 [
-                    'text'    => 'Item',
+                    'text'    => 'Codes',
+                    'icon'    => 'fas fa-fw fa-barcode',
+                    'submenu' => [
+                        [
+                            'text' => 'List',
+                            'url'  => 'code',
+                            'icon'    => 'fas fa-fw fa-minus',
+                        ],
+                        [
+                            'text' => 'Create',
+                            'url'  => 'code/create',
+                            'icon'    => 'fas fa-fw fa-minus',
+                        ],
+                    ],
+                ],
+                [
+                    'text'    => 'Items',
                     'icon'    => 'fas fa-fw fa-cubes',
                     'submenu' => [
                         [
@@ -349,7 +365,7 @@ return [
                 ],
                 [
                     'text'    => 'Models',
-                    'icon'    => 'fas fa-fw fa-cubes',
+                    'icon'    => 'fas fa-shapes',
                     'submenu' => [
                         [
                             'text' => 'List',
@@ -366,7 +382,7 @@ return [
             ],
         ],
         [
-            'text'    => 'Company',
+            'text'    => 'Companies',
             'icon'    => 'fas fa-fw fa-building',
             'submenu' => [
                 [
@@ -380,7 +396,7 @@ return [
                     'icon'    => 'fas fa-fw fa-minus',
                 ],
                 [
-                    'text'    => 'Brand',
+                    'text'    => 'Brands',
                     'icon'    => 'fas fa-fw fa-copyright',
                     'submenu' => [
                         [
@@ -414,8 +430,8 @@ return [
             ],
         ],
         [
-            'text'    => 'Tag',
-            'icon'    => 'fas fa-fw fa-cubes',
+            'text'    => 'Tags',
+            'icon'    => 'fas fa-fw fa-tags',
             'submenu' => [
                 [
                     'text' => 'List',
@@ -446,8 +462,8 @@ return [
             ],
         ],        
         [
-            'text'    => 'Currency',
-            'icon'    => 'fas fa-fw fa-cash-register',
+            'text'    => 'Currencies',
+            'icon'    => 'fas fa-fw fa-dollar-sign',
             'submenu' => [
                 [
                     'text' => 'List',

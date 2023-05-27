@@ -23,6 +23,9 @@ class CodeStoreRequest extends FormRequest
     {
         return [
             'code' => 'required|unique:codes',
+            "brand" => 'prohibits:item,type|exists:brands',
+            "type" => 'prohibits:brand,item|exists:types',
+            "item" => 'prohibits:brand,type|exists:items',
         ];
     }
 }

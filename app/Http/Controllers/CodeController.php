@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Code;
+use App\Models\Brand;
+use App\Models\Type;
+use App\Models\Item;
 use Illuminate\Http\Request;
 use App\Http\Resources\CodeResource;
 use Illuminate\Support\Facades\DB;
@@ -43,9 +46,8 @@ class CodeController extends Controller
     {
         DB::beginTransaction();
         try {
-            Code::create([
-                'code' => mb_strtoupper($request->input('code')),
-            ]);
+            $store = ($request->input('brand')) ? Brand::where('brand',$request->input('brand'))->get()->first() : ($request->input('type') ? Type::where('type',$request->input('type'))->get()->first() : Item::where('item',$request->input('item'))->get()->first());
+            $store->codes()->create(['code' => mb_strtoupper($request->input('code')),]);
             DB::commit();
             event(new CodeRegisteredEvent('Code Registered'));
             if(!$request->header('Authorization'))

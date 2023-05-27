@@ -14,19 +14,11 @@ class WarehouseInventoryResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $item = '';
-        if($this->inventoryable->item){
-            $item = $this->inventoryable->item;
-        }
-        if($this->inventoryable->code){
-            $item = $this->inventoryable->code;
-        }
-        if($this->inventoryable->type){
-            $item = $this->inventoryable->type;
-        }
         return [
             'amount' => $this->amount,
-            'inventoryable' => $item,
+            'item' => ($this->inventoryable->code)? $this->inventoryable->codeable->type : (($this->inventoryable->type)? $this->inventoryable->type : $this->inventoryable->item),
+            'code' => ($this->inventoryable->code)? $this->inventoryable->code : '',
+            'tags' => ($this->inventoryable->tags->isEmpty())? [] : WarehouseInventoryTagsResource::collection($this->inventoryable->tags),
         ];
     }
 }

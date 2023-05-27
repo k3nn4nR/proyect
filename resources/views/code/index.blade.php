@@ -22,6 +22,7 @@
                             <thead>
                                 <tr>
                                     <th>Code</th>
+                                    <th>Item</th>
                                     <th>Created</th>
                                     <th></th>
                                 </tr>
@@ -29,6 +30,7 @@
                             <tfoot>
                                 <tr>
                                     <th>Code</th>
+                                    <th>Item</th>
                                     <th>Created</th>
                                     <th></th>
                                 </tr>
@@ -54,10 +56,11 @@
                 },
                 columns: [
                     { data: 'code' },
+                    { data: 'item' },
                     { data: 'created_at' },
                     {
                         render: function ( data, type, row, meta ) {
-                            return '<a href="'+route('code.edit',row.code)+'" class="btn btn-sm btn-warning"><i class="fa fa-trash"></i></a>'+
+                            return '<a href="'+route('code.edit',row.code)+'" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></a>'+
                             '<form action="'+route('code.destroy',row.code)+'" method="post"> @csrf'+
                             '<input type="hidden" name="_method" value="DELETE" >'+
                             '<button class="btn btn-sm btn-danger" type="submit"><i class="fa fa-trash"></i></button></form>'

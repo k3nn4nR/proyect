@@ -62,7 +62,7 @@
                     { data: 'created_at' },
                     {
                         render: function ( data, type, row, meta ) {
-                            return '<a href="'+route('payment.edit',row.id)+'" class="btn btn-sm btn-warning"><i class="fa fa-trash"></i></a>'+
+                            return '<a href="'+route('payment.edit',row.id)+'" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></a>'+
                             '<form action="'+route('payment.destroy',row.id)+'" method="post"> @csrf'+
                             '<input type="hidden" name="_method" value="DELETE" >'+
                             '<button class="btn btn-sm btn-danger" type="submit"><i class="fa fa-trash"></i></button></form>'

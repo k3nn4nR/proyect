@@ -57,7 +57,7 @@
                     { data: 'created_at' },
                     {
                         render: function ( data, type, row, meta ) {
-                            return '<a href="'+route('service.edit',row.service)+'" class="btn btn-sm btn-warning"><i class="fa fa-trash"></i></a>'+
+                            return '<a href="'+route('service.edit',row.service)+'" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></a>'+
                             '<form action="'+route('service.destroy',row.service)+'" method="post"> @csrf'+
                             '<input type="hidden" name="_method" value="DELETE" >'+
                             '<button class="btn btn-sm btn-danger" type="submit"><i class="fa fa-trash"></i></button></form>'

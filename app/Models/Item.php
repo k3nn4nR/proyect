@@ -26,6 +26,6 @@ class Item extends Model
      */
     public function codes(): MorphMany
     {
-        return $this->morphMany(Code::class, 'commentable');
+        return $this->morphMany(Code::class, 'codeable');
     }
 }

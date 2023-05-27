@@ -16,6 +16,7 @@ class CodeResource extends JsonResource
     {
         return [
             'code' => $this->code,
+            'item' => ($this->codeable->type) ? $this->codeable->type : (($this->codeable->brand) ? $this->codeable->brand : $this->codeable->item) ,
             'created_at' => $this->created_at,
         ];
     }
