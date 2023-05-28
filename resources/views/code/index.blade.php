@@ -23,6 +23,7 @@
                                 <tr>
                                     <th>Code</th>
                                     <th>Item</th>
+                                    <th>Type</th>
                                     <th>Created</th>
                                     <th></th>
                                 </tr>
@@ -31,6 +32,7 @@
                                 <tr>
                                     <th>Code</th>
                                     <th>Item</th>
+                                    <th>Type</th>
                                     <th>Created</th>
                                     <th></th>
                                 </tr>
@@ -57,6 +59,7 @@
                 columns: [
                     { data: 'code' },
                     { data: 'item' },
+                    { data: 'type' },
                     { data: 'created_at' },
                     {
                         render: function ( data, type, row, meta ) {

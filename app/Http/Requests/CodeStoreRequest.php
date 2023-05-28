@@ -23,9 +23,10 @@ class CodeStoreRequest extends FormRequest
     {
         return [
             'code' => 'required|unique:codes',
-            "brand" => 'prohibits:item,type|exists:brands',
-            "type" => 'prohibits:brand,item|exists:types',
-            "item" => 'prohibits:brand,type|exists:items',
+            'brand' => 'required_without_all:item,type,currency|prohibits:item,type,currency|exists:brands',
+            'type' => 'required_without_all:brand,item,currency|prohibits:brand,item,currency|exists:types',
+            'item' => 'required_without_all:brand,type,currency|prohibits:brand,type,currency|exists:items',
+            'currency' => 'required_without_all:brand,type,items|prohibits:brand,type,items|exists:currencies',
         ];
     }
 }

@@ -14,27 +14,26 @@
 
 @section('content')
 <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table id="myTable" class="table table-bordered table-striped table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Brand</th>
-                                    <th>Created</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tfoot>
-                                <tr>
-                                    <th>Brand</th>
-                                    <th>Created</th>
-                                    <th></th>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="myTable" class="table table-bordered table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Brand</th>
+                                <th>Created</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th>Brand</th>
+                                <th>Created</th>
+                                <th></th>
+                            </tr>
+                        </tfoot>
+                    </table>
                 </div>
             </div>
         </div>

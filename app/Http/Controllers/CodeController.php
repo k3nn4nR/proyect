@@ -6,6 +6,7 @@ use App\Models\Code;
 use App\Models\Brand;
 use App\Models\Type;
 use App\Models\Item;
+use App\Models\Currency;
 use Illuminate\Http\Request;
 use App\Http\Resources\CodeResource;
 use Illuminate\Support\Facades\DB;
@@ -46,7 +47,10 @@ class CodeController extends Controller
     {
         DB::beginTransaction();
         try {
-            $store = ($request->input('brand')) ? Brand::where('brand',$request->input('brand'))->get()->first() : ($request->input('type') ? Type::where('type',$request->input('type'))->get()->first() : Item::where('item',$request->input('item'))->get()->first());
+            $store = ($request->input('brand')) ? Brand::where('brand',$request->input('brand'))->get()->first() : 
+            ($request->input('type') ? Type::where('type',$request->input('type'))->get()->first() : 
+            ($request->input('currency') ? Currency::where('currency',$request->input('currency'))->get()->first() : 
+            Item::where('item',$request->input('item'))->get()->first()));
             $store->codes()->create(['code' => mb_strtoupper($request->input('code')),]);
             DB::commit();
             event(new CodeRegisteredEvent('Code Registered'));

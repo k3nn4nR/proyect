@@ -35,6 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::name('brand.')->group(function () {
         Route::controller(App\Http\Controllers\BrandController::class)->group(function () {
+            Route::post('/brand/{brand}/tags','store_tags')->name('store_tags');
         });
     });
 

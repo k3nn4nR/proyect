@@ -113,4 +113,9 @@ class BrandController extends Controller
             return redirect()->back()->with('message', $e->getMessage());
         }
     }
+
+    public function store_tags(Request $request, Brand $brand)
+    {
+        dd($brand);
+    }
 }
