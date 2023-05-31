@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Brand;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 use App\Http\Resources\BrandResource;
 use Illuminate\Support\Facades\DB;
 use App\Events\BrandRegisteredEvent;
 use App\Http\Requests\BrandStoreRequest;
+use App\Http\Requests\StoreBrandTagsRequest;
 
 class BrandController extends Controller
 {
@@ -114,8 +116,10 @@ class BrandController extends Controller
         }
     }
 
-    public function store_tags(Request $request, Brand $brand)
+    public function store_tags(StoreBrandTagsRequest $request, Brand $brand)
     {
-        dd($brand);
+        // dd(Tag::wherein('tag',$request->input('tags'))->pluck('id')->toArray());
+        // dd($request->input('tags'));
+        dd($brand->tags()->sync(Tag::wherein('tag',$request->input('tags'))->pluck('id')->toArray(),false));
     }
 }

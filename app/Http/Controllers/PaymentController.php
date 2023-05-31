@@ -66,8 +66,8 @@ class PaymentController extends Controller
                     ]);
                     $position++;
                 }
+                $position = 0;
             }
-            $position = 0;
             if($request->input('items')){
                 foreach($request->input('items') as $item){
                     $item_insert = Item::where('item',$item)->get()->first();

@@ -43,14 +43,12 @@
 
 @push('js')
     <script>
-        
         $(document).ready( function () {
-
             var table = $('#myTable').DataTable({
                 ajax: {
                     url: 'api/brand',
                     headers: { 'Content-type': 'application/json' },
-                    headers: { 'Authorization': 'Bearer '+localStorage.getItem('token') }
+                    headers: { 'Authorization': 'Bearer '+localStorage.getItem('token') } 
                 },
                 columns: [
                     { data: 'brand' },
@@ -65,7 +63,6 @@
                     }
                 ],
             });
-
             Echo.channel('brand-registered')
             .listen('BrandRegisteredEvent', (e)=>{
                 table.ajax.reload();

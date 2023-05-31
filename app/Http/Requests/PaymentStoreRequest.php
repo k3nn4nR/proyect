@@ -24,13 +24,10 @@ class PaymentStoreRequest extends FormRequest
         return [
             'company'   => 'required|exists:companies',
             'currency'  => 'required|exists:currencies',
-            
             'items'   => 'filled',
             'services'=> 'filled',
-
             'items.*'   => 'required|exists:items,item',
             'services.*'=> 'required|exists:services,service',
-
             'items_ammount.*' => 'required_with:items',
             'items_price.*'   => 'required_with:items',
             'services_ammount.*'  => 'required_with:services',
