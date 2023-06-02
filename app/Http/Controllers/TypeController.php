@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Type;
-use App\Models\Brand;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 use App\Http\Resources\TypeResource;
 use Illuminate\Support\Facades\DB;
 use App\Events\TypeRegisteredEvent;
 use App\Http\Requests\TypeStoreRequest;
+use App\Http\Requests\StoreTypeTagsRequest;
+use Carbon\Carbon;
 
 class TypeController extends Controller
 {
@@ -36,10 +38,10 @@ class TypeController extends Controller
     {
         DB::beginTransaction();
         try {
-            $brand = Brand::where('brand',$request->input('brand'))->get()->first();
+            $Type = Type::where('Type',$request->input('Type'))->get()->first();
             Type::create([
                 'type' => mb_strtoupper($request->input('type')),
-                'brand_id' => $brand->id
+                'Type_id' => $Type->id
             ]);
             DB::commit();
             event(new TypeRegisteredEvent('Type Registered'));
@@ -111,6 +113,27 @@ class TypeController extends Controller
             DB::commit();
             event(new TypeRegisteredEvent('Type Deleted'));
             return redirect('/type');
+        } catch(\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('message', $e->getMessage());
+        }
+    }
+
+    public function store_tags(StoreTypeTagsRequest $request, Type $Type)
+    {
+        DB::beginTransaction();
+        try {
+            if(!$request->input('tags')){
+                $Type->tags()->syncWithPivotValues($Type->tags->pluck('id')->toArray(),['deleted_at'=>Carbon::now()],false);
+                DB::commit();
+                return redirect()->back();
+            }
+            if($Type->tags->pluck('id')->diff(Tag::wherein('tag',$request->input('tags'))->pluck('id'))->isNotEmpty())
+                $Type->tags()->syncWithPivotValues($Type->tags->pluck('id')->diff(Tag::wherein('tag',$request->input('tags'))->pluck('id')),['deleted_at'=>Carbon::now()],false);
+            if(Tag::wherein('tag',$request->input('tags'))->pluck('id')->diff($Type->tags->pluck('id')->isNotEmpty()))
+                $Type->tags()->sync(Tag::wherein('tag',$request->input('tags'))->pluck('id')->diff($Type->tags->pluck('id')),false);
+            DB::commit();
+            return redirect()->back();
         } catch(\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('message', $e->getMessage());

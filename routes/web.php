@@ -41,21 +41,25 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::name('code.')->group(function () {
         Route::controller(App\Http\Controllers\CodeController::class)->group(function () {
+            Route::post('/code/{code}/tags','store_tags')->name('store_tags');
         });
     });
 
     Route::name('company.')->group(function () {
         Route::controller(App\Http\Controllers\CompanyController::class)->group(function () {
+            Route::post('/company/{company}/tags','store_tags')->name('store_tags');
         });
     });
 
     Route::name('currency.')->group(function () {
         Route::controller(App\Http\Controllers\CurrencyController::class)->group(function () {
+            Route::post('/currency/{currency}/tags','store_tags')->name('store_tags');
         });
     });
 
     Route::name('item.')->group(function () {
         Route::controller(App\Http\Controllers\ItemController::class)->group(function () {
+            Route::post('/item/{item}/tags','store_tags')->name('store_tags');
         });
     });
 
@@ -67,26 +71,31 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::name('payment.')->group(function () {
         Route::controller(App\Http\Controllers\PaymentController::class)->group(function () {
+            Route::post('/payment/{payment}/tags','store_tags')->name('store_tags');
         });
     });
 
     Route::name('service.')->group(function () {
         Route::controller(App\Http\Controllers\ServiceController::class)->group(function () {
+            Route::post('/service/{service}/tags','store_tags')->name('store_tags');
         });
     });
 
     Route::name('tag.')->group(function () {
         Route::controller(App\Http\Controllers\TagController::class)->group(function () {
+            Route::post('/tag/{tag}/tags','store_tags')->name('store_tags');
         });
     });
 
     Route::name('type.')->group(function () {
         Route::controller(App\Http\Controllers\TypeController::class)->group(function () {
+            Route::post('/type/{type}/tags','store_tags')->name('store_tags');
         });
     });
 
     Route::name('warehouse.')->group(function () {
         Route::controller(App\Http\Controllers\WarehouseController::class)->group(function () {
+            Route::post('/warehouse/{warehouse}/tags','store_tags')->name('store_tags');
         });
     });
 });

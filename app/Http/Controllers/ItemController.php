@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Item;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 use App\Http\Resources\ItemResource;
 use Illuminate\Support\Facades\DB;
 use App\Events\ItemRegisteredEvent;
 use App\Http\Requests\ItemStoreRequest;
+use App\Http\Requests\StoreItemTagsRequest;
+use Carbon\Carbon;
 
 class ItemController extends Controller
 {
@@ -105,6 +108,27 @@ class ItemController extends Controller
             DB::commit();
             event(new ItemRegisteredEvent('Item Deleted'));
             return redirect('/item');
+        } catch(\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('message', $e->getMessage());
+        }
+    }
+
+    public function store_tags(StoreItemTagsRequest $request, Item $item)
+    {
+        DB::beginTransaction();
+        try {
+            if(!$request->input('tags')){
+                $item->tags()->syncWithPivotValues($item->tags->pluck('id')->toArray(),['deleted_at'=>Carbon::now()],false);
+                DB::commit();
+                return redirect()->back();
+            }
+            if($item->tags->pluck('id')->diff(Tag::wherein('tag',$request->input('tags'))->pluck('id'))->isNotEmpty())
+                $item->tags()->syncWithPivotValues($item->tags->pluck('id')->diff(Tag::wherein('tag',$request->input('tags'))->pluck('id')),['deleted_at'=>Carbon::now()],false);
+            if(Tag::wherein('tag',$request->input('tags'))->pluck('id')->diff($item->tags->pluck('id')->isNotEmpty()))
+                $item->tags()->sync(Tag::wherein('tag',$request->input('tags'))->pluck('id')->diff($item->tags->pluck('id')),false);
+            DB::commit();
+            return redirect()->back();
         } catch(\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('message', $e->getMessage());

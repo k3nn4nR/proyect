@@ -16,6 +16,7 @@ class CurrencyResource extends JsonResource
     {
         return [
             'currency' => $this->currency,
+            'code' => $this->codes->first()->code,
             'created_at' => $this->created_at,
         ];
     }

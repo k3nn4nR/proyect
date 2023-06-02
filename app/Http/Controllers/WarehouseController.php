@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Warehouse;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 use App\Http\Resources\WarehouseResource;
 use Illuminate\Support\Facades\DB;
 use App\Events\WarehouseRegisteredEvent;
 use App\Http\Requests\WarehouseStoreRequest;
+use App\Http\Requests\StoreWarehouseTagsRequest;
+use Carbon\Carbon;
 
 class WarehouseController extends Controller
 {
@@ -108,6 +111,28 @@ class WarehouseController extends Controller
             DB::commit();
             event(new WarehouseRegisteredEvent('Warehouse Deleted'));
             return redirect('/warehouse');
+        } catch(\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('message', $e->getMessage());
+        }
+    }
+
+    
+    public function store_tags(StoreWarehouseTagsRequest $request, Warehouse $warehouse)
+    {
+        DB::beginTransaction();
+        try {
+            if(!$request->input('tags')){
+                $warehouse->tags()->syncWithPivotValues($warehouse->tags->pluck('id')->toArray(),['deleted_at'=>Carbon::now()],false);
+                DB::commit();
+                return redirect()->back();
+            }
+            if($warehouse->tags->pluck('id')->diff(Tag::wherein('tag',$request->input('tags'))->pluck('id'))->isNotEmpty())
+                $warehouse->tags()->syncWithPivotValues($warehouse->tags->pluck('id')->diff(Tag::wherein('tag',$request->input('tags'))->pluck('id')),['deleted_at'=>Carbon::now()],false);
+            if(Tag::wherein('tag',$request->input('tags'))->pluck('id')->diff($warehouse->tags->pluck('id')->isNotEmpty()))
+                $warehouse->tags()->sync(Tag::wherein('tag',$request->input('tags'))->pluck('id')->diff($warehouse->tags->pluck('id')),false);
+            DB::commit();
+            return redirect()->back();
         } catch(\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('message', $e->getMessage());

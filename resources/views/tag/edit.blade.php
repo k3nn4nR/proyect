@@ -1,6 +1,7 @@
 @extends('adminlte::page')
 
 @section('title', 'Tag')
+@section('plugins.Select2', true)
 
 @section('content_header')
     <h1 class="m-0 text-dark">Tag</h1>
@@ -8,82 +9,62 @@
 
 @section('content')
 <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <div class="card">
-                        <div class="card-header">
-                        </div>
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="card col-6">
                         <div class="card-body">
-                            {{ $tag }}
+                            <form id="tag_form" method="POST" action="{{ route('tag.update',$tag) }}">
+                                @method('PUT')
+                                @csrf
+                                <div class="form-group row">
+                                    <label for="tag">{{ __('Tag') }}</label>
+                                    <div class="col-md-6">
+                                        <input id="tag" type="text" class="form-control @error('tag') is-invalid @enderror" name="tag" required placeholder="{{ $tag->tag }}">
+                                        @error('tag')
+                                        <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="form-group row ">
+                                    <div class="col-md-4 col-md-offset-4">
+                                        <button type="submit" class="btn btn-primary btn-block" onclick="event.preventDefault(); document.getElementById('tag_form').submit();">
+                                            {{ __('Save') }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
-                    @if($tag->childs->isNotEmpty())
-                        <div class="card">
-                            <div class="card-header">
-                                Childs
-                            </div>
-                            <div class="card-body">
-                            @foreach ($tag->childs as $child)
-                                {{ $child }}
-                            @endforeach
+                    <div class="card col-6">
+                        <div class="card-body">
+                            <form id="tags_form" method="POST" action="{{ route('tag.store_tags',$tag) }}">
+                                @csrf
+                                <div class="form-group row">
+                                    <div class="col-md-6">
+                                        <label for="tags_select">{{ __('Tag') }}</label>
+                                        <select class="form-control @error('tags') is-invalid @enderror" id="tags_select" name="tags[]" multiple="multiple">
+                                        </select>
+                                        @error('tags')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="form-group row ">
+                                    <div class="col-md-4 col-md-offset-4">
+                                        <button type="submit" class="btn btn-primary btn-block" onclick="event.preventDefault(); document.getElementById('tags_form').submit();">
+                                            {{ __('Save') }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
-                    @endif
-                    @if($tag->parents->isNotEmpty())
-                        <div class="card">
-                            <div class="card-header">
-                                Parents
-                            </div>
-                            <div class="card-body">
-                            @foreach ($tag->parents as $parent)
-                                {{ $parent }}
-                            @endforeach
-                        </div>
-                    @endif
-                    @if($tag->items->isNotEmpty())
-                        <div class="card">
-                            <div class="card-header">
-                                Items
-                            </div>
-                            <div class="card-body">
-                            @foreach ($tag->items as $item)
-                                {{ $item }}
-                            @endforeach
-                        </div>
-                    @endif
-                    @if($tag->brands->isNotEmpty())
-                        <div class="card">
-                            <div class="card-header">
-                                Brands
-                            </div>
-                            <div class="card-body">
-                            @foreach ($tag->brands as $brand)
-                                {{ $brand }}
-                            @endforeach
-                        </div>
-                    @endif
-                    @if($tag->services->isNotEmpty())
-                        <div class="card">
-                            <div class="card-header">
-                                Services
-                            </div>
-                            <div class="card-body">
-                            @foreach ($tag->services as $service)
-                                {{ $service }}
-                            @endforeach
-                        </div>
-                    @endif
-                    @if($tag->types->isNotEmpty())
-                        <div class="card">  
-                            <div class="card-header">
-                                Types
-                            </div>
-                            <div class="card-body">
-                            @foreach ($tag->types as $type)
-                                {{ $type }}
-                            @endforeach
-                        </div>
-                    @endif
+                    </div>
                 </div>
             </div>
         </div>
@@ -93,9 +74,36 @@
 
 @push('js')
     <script>
-         $(document).ready( function () {
-            
+        $(document).ready( function () {
+            var headers = { 'Content-type': 'application/json', 'Authorization': 'Bearer '+localStorage.getItem('token') }
+            Echo.channel('tag-registered')
+            .listen('TagRegisteredEvent', (e)=>{
+                getTags(headers)
+            });
+            getTags(headers);
         });
+
+        function getTags(headers){
+            var tags_select = $('#tags_select').select2();
+            var tags = {!! json_encode($tag->tags) !!};
+            $.ajax({
+                url: route('tag.api_index'),
+                headers: headers,
+                success: function (response) {
+                    for (var i = 0; i < response.data.length; i++){
+                        var added = document.createElement('option');
+                        added.value = response.data[i].tag;
+                        added.innerHTML = response.data[i].tag;
+                        if(tags.some(el => el.tag === response.data[i].tag))
+                            added.selected = true
+                        tags_select.append(added);
+                    }
+                },
+                error: function (data) {
+                    console.log(data)
+                }
+            })
+        }
     </script>
 @endpush
 

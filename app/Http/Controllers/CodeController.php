@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Code;
 use App\Models\Brand;
+use App\Models\Tag;
 use App\Models\Type;
 use App\Models\Item;
 use App\Models\Currency;
@@ -12,6 +13,9 @@ use App\Http\Resources\CodeResource;
 use Illuminate\Support\Facades\DB;
 use App\Events\CodeRegisteredEvent;
 use App\Http\Requests\CodeStoreRequest;
+use App\Http\Requests\StoreCodeTagsRequest;
+use App\Http\Requests\CodeUpdateRequest;
+use Carbon\Carbon;
 
 class CodeController extends Controller
 {
@@ -85,7 +89,7 @@ class CodeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(CodeStoreRequest $request, Code $code)
+    public function update(CodeUpdateRequest $request, Code $code)
     {
         DB::beginTransaction();
         try {
@@ -114,6 +118,28 @@ class CodeController extends Controller
             DB::commit();
             event(new CodeRegisteredEvent('Code Deleted'));
             return redirect('/code');
+        } catch(\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('message', $e->getMessage());
+        }
+    }
+
+    
+    public function store_tags(StoreCodeTagsRequest $request, Code $code)
+    {
+        DB::beginTransaction();
+        try {
+            if(!$request->input('tags')){
+                $code->tags()->syncWithPivotValues($code->tags->pluck('id')->toArray(),['deleted_at'=>Carbon::now()],false);
+                DB::commit();
+                return redirect()->back();
+            }
+            if($code->tags->pluck('id')->diff(Tag::wherein('tag',$request->input('tags'))->pluck('id'))->isNotEmpty())
+                $code->tags()->syncWithPivotValues($code->tags->pluck('id')->diff(Tag::wherein('tag',$request->input('tags'))->pluck('id')),['deleted_at'=>Carbon::now()],false);
+            if(Tag::wherein('tag',$request->input('tags'))->pluck('id')->diff($code->tags->pluck('id')->isNotEmpty()))
+                $code->tags()->sync(Tag::wherein('tag',$request->input('tags'))->pluck('id')->diff($code->tags->pluck('id')),false);
+            DB::commit();
+            return redirect()->back();
         } catch(\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('message', $e->getMessage());

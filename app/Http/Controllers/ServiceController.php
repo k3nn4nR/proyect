@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Service;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 use App\Http\Resources\ServiceResource;
 use Illuminate\Support\Facades\DB;
 use App\Events\ServiceRegisteredEvent;
 use App\Http\Requests\ServiceStoreRequest;
+use App\Http\Requests\StoreServiceTagsRequest;
+use Carbon\Carbon;
 
 class ServiceController extends Controller
 {
@@ -108,6 +111,27 @@ class ServiceController extends Controller
             DB::commit();
             event(new ServiceRegisteredEvent('Service Deleted'));
             return redirect('/service');
+        } catch(\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('message', $e->getMessage());
+        }
+    }
+
+    public function store_tags(StoreServiceTagsRequest $request, Service $service)
+    {
+        DB::beginTransaction();
+        try {
+            if(!$request->input('tags')){
+                $service->tags()->syncWithPivotValues($service->tags->pluck('id')->toArray(),['deleted_at'=>Carbon::now()],false);
+                DB::commit();
+                return redirect()->back();
+            }
+            if($service->tags->pluck('id')->diff(Tag::wherein('tag',$request->input('tags'))->pluck('id'))->isNotEmpty())
+                $service->tags()->syncWithPivotValues($service->tags->pluck('id')->diff(Tag::wherein('tag',$request->input('tags'))->pluck('id')),['deleted_at'=>Carbon::now()],false);
+            if(Tag::wherein('tag',$request->input('tags'))->pluck('id')->diff($service->tags->pluck('id')->isNotEmpty()))
+                $service->tags()->sync(Tag::wherein('tag',$request->input('tags'))->pluck('id')->diff($service->tags->pluck('id')),false);
+            DB::commit();
+            return redirect()->back();
         } catch(\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('message', $e->getMessage());

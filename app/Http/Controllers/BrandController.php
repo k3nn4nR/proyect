@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use App\Events\BrandRegisteredEvent;
 use App\Http\Requests\BrandStoreRequest;
 use App\Http\Requests\StoreBrandTagsRequest;
+use Carbon\Carbon;
 
 class BrandController extends Controller
 {
@@ -75,7 +76,7 @@ class BrandController extends Controller
      */
     public function show(Brand $brand)
     {
-        
+
     }
 
     /**
@@ -118,8 +119,22 @@ class BrandController extends Controller
 
     public function store_tags(StoreBrandTagsRequest $request, Brand $brand)
     {
-        // dd(Tag::wherein('tag',$request->input('tags'))->pluck('id')->toArray());
-        // dd($request->input('tags'));
-        dd($brand->tags()->sync(Tag::wherein('tag',$request->input('tags'))->pluck('id')->toArray(),false));
+        DB::beginTransaction();
+        try {
+            if(!$request->input('tags')){
+                $brand->tags()->syncWithPivotValues($brand->tags->pluck('id')->toArray(),['deleted_at'=>Carbon::now()],false);
+                DB::commit();
+                return redirect()->back();
+            }
+            if($brand->tags->pluck('id')->diff(Tag::wherein('tag',$request->input('tags'))->pluck('id'))->isNotEmpty())
+                $brand->tags()->syncWithPivotValues($brand->tags->pluck('id')->diff(Tag::wherein('tag',$request->input('tags'))->pluck('id')),['deleted_at'=>Carbon::now()],false);
+            if(Tag::wherein('tag',$request->input('tags'))->pluck('id')->diff($brand->tags->pluck('id')->isNotEmpty()))
+                $brand->tags()->sync(Tag::wherein('tag',$request->input('tags'))->pluck('id')->diff($brand->tags->pluck('id')),false);
+            DB::commit();
+            return redirect()->back();
+        } catch(\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('message', $e->getMessage());
+        }
     }
 }

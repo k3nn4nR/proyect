@@ -18,7 +18,7 @@ class Tag extends Model
      */
     public function items(): MorphToMany
     {
-        return $this->morphedByMany(Item::class, 'taggable');
+        return $this->morphedByMany(Item::class, 'taggable')->withTimestamps()->wherePivotNull('deleted_at');
     }
  
     /**
@@ -26,7 +26,7 @@ class Tag extends Model
      */
     public function brands(): MorphToMany
     {
-        return $this->morphedByMany(Brand::class, 'taggable');
+        return $this->morphedByMany(Brand::class, 'taggable')->withTimestamps()->wherePivotNull('deleted_at');
     }
 
     /**
@@ -34,7 +34,7 @@ class Tag extends Model
      */
     public function currencies(): MorphToMany
     {
-        return $this->morphedByMany(Currency::class, 'taggable');
+        return $this->morphedByMany(Currency::class, 'taggable')->withTimestamps()->wherePivotNull('deleted_at');
     }
 
     /**
@@ -42,7 +42,7 @@ class Tag extends Model
      */
     public function companies(): MorphToMany
     {
-        return $this->morphedByMany(Company::class, 'taggable');
+        return $this->morphedByMany(Company::class, 'taggable')->withTimestamps()->wherePivotNull('deleted_at');
     }
 
     /**
@@ -50,7 +50,7 @@ class Tag extends Model
      */
     public function services(): MorphToMany
     {
-        return $this->morphedByMany(Service::class, 'taggable');
+        return $this->morphedByMany(Service::class, 'taggable')->withTimestamps()->wherePivotNull('deleted_at');
     }
 
     /**
@@ -58,7 +58,7 @@ class Tag extends Model
      */
     public function codes(): MorphToMany
     {
-        return $this->morphedByMany(Code::class, 'taggable');
+        return $this->morphedByMany(Code::class, 'taggable')->withTimestamps()->wherePivotNull('deleted_at');
     }
 
     /**
@@ -66,7 +66,7 @@ class Tag extends Model
      */
     public function payments(): MorphToMany
     {
-        return $this->morphedByMany(Payment::class, 'taggable');
+        return $this->morphedByMany(Payment::class, 'taggable')->withTimestamps()->wherePivotNull('deleted_at');
     }
 
     /**
@@ -74,22 +74,15 @@ class Tag extends Model
      */
     public function types(): MorphToMany
     {
-        return $this->morphedByMany(Type::class, 'taggable');
+        return $this->morphedByMany(Type::class, 'taggable')->withTimestamps()->wherePivotNull('deleted_at');
     }
 
     /**
      * Get all tag childs that are assigned this tag.
      */
-    public function childs(): BelongsToMany
+    public function tags(): MorphToMany
     {
-        return $this->belongsToMany(Tag::class, 'tag_tag', 'tag_id','tag_tag_id');
-    }
-
-    /**
-     * Get all tag parents that are assigned this tag.
-     */
-    public function parents(): BelongsToMany
-    {
-        return $this->belongsToMany(Tag::class, 'tag_tag', 'tag_tag_id','tag_id');
+        return $this->morphedByMany(Tag::class, 'taggable')->withTimestamps()->wherePivotNull('deleted_at');
+        
     }
 }

@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Currency;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\CurrencyResource;
 use App\Events\CurrencyRegisteredEvent;
 use App\Http\Requests\CurrencyStoreRequest;
+use App\Http\Requests\StoreCurrencyTagsRequest;
+use Carbon\Carbon;
 
 class CurrencyController extends Controller
 {
@@ -108,6 +111,27 @@ class CurrencyController extends Controller
             DB::commit();
             event(new CurrencyRegisteredEvent('Currency Deleted'));
             return redirect('/currency');
+        } catch(\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('message', $e->getMessage());
+        }
+    }
+
+    public function store_tags(StoreCurrencyTagsRequest $request, Currency $currency)
+    {
+        DB::beginTransaction();
+        try {
+            if(!$request->input('tags')){
+                $currency->tags()->syncWithPivotValues($currency->tags->pluck('id')->toArray(),['deleted_at'=>Carbon::now()],false);
+                DB::commit();
+                return redirect()->back();
+            }
+            if($currency->tags->pluck('id')->diff(Tag::wherein('tag',$request->input('tags'))->pluck('id'))->isNotEmpty())
+                $currency->tags()->syncWithPivotValues($currency->tags->pluck('id')->diff(Tag::wherein('tag',$request->input('tags'))->pluck('id')),['deleted_at'=>Carbon::now()],false);
+            if(Tag::wherein('tag',$request->input('tags'))->pluck('id')->diff($currency->tags->pluck('id')->isNotEmpty()))
+                $currency->tags()->sync(Tag::wherein('tag',$request->input('tags'))->pluck('id')->diff($currency->tags->pluck('id')),false);
+            DB::commit();
+            return redirect()->back();
         } catch(\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('message', $e->getMessage());

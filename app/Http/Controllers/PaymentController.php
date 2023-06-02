@@ -6,12 +6,15 @@ use App\Models\Payment;
 use App\Models\Company;
 use App\Models\Currency;
 use App\Models\Item;
+use App\Models\Tag;
 use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\PaymentResource;
 use App\Events\PaymentRegisteredEvent;
 use App\Http\Requests\PaymentStoreRequest;
+use App\Http\Requests\StorePaymentTagsRequest;
+use Carbon\Carbon;
 
 class PaymentController extends Controller
 {
@@ -147,6 +150,27 @@ class PaymentController extends Controller
             DB::commit();
             event(new PaymentRegisteredEvent('Payment Deleted'));
             return redirect('/payment');
+        } catch(\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('message', $e->getMessage());
+        }
+    }
+
+    public function store_tags(StorePaymentTagsRequest $request, Payment $payment)
+    {
+        DB::beginTransaction();
+        try {
+            if(!$request->input('tags')){
+                $payment->tags()->syncWithPivotValues($payment->tags->pluck('id')->toArray(),['deleted_at'=>Carbon::now()],false);
+                DB::commit();
+                return redirect()->back();
+            }
+            if($payment->tags->pluck('id')->diff(Tag::wherein('tag',$request->input('tags'))->pluck('id'))->isNotEmpty())
+                $payment->tags()->syncWithPivotValues($payment->tags->pluck('id')->diff(Tag::wherein('tag',$request->input('tags'))->pluck('id')),['deleted_at'=>Carbon::now()],false);
+            if(Tag::wherein('tag',$request->input('tags'))->pluck('id')->diff($payment->tags->pluck('id')->isNotEmpty()))
+                $payment->tags()->sync(Tag::wherein('tag',$request->input('tags'))->pluck('id')->diff($payment->tags->pluck('id')),false);
+            DB::commit();
+            return redirect()->back();
         } catch(\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('message', $e->getMessage());

@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\CompanyResource;
 use App\Events\CompanyRegisteredEvent;
 use App\Http\Requests\CompanyStoreRequest;
+use App\Http\Requests\StoreCompanyTagsRequest;
+use Carbon\Carbon;
 
 class CompanyController extends Controller
 {
@@ -108,6 +111,27 @@ class CompanyController extends Controller
             DB::commit();
             event(new CompanyRegisteredEvent('Company Deleted'));
             return redirect('/company');
+        } catch(\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('message', $e->getMessage());
+        }
+    }
+
+    public function store_tags(StoreCompanyTagsRequest $request, Company $company)
+    {
+        DB::beginTransaction();
+        try {
+            if(!$request->input('tags')){
+                $company->tags()->syncWithPivotValues($company->tags->pluck('id')->toArray(),['deleted_at'=>Carbon::now()],false);
+                DB::commit();
+                return redirect()->back();
+            }
+            if($company->tags->pluck('id')->diff(Tag::wherein('tag',$request->input('tags'))->pluck('id'))->isNotEmpty())
+                $company->tags()->syncWithPivotValues($company->tags->pluck('id')->diff(Tag::wherein('tag',$request->input('tags'))->pluck('id')),['deleted_at'=>Carbon::now()],false);
+            if(Tag::wherein('tag',$request->input('tags'))->pluck('id')->diff($company->tags->pluck('id')->isNotEmpty()))
+                $company->tags()->sync(Tag::wherein('tag',$request->input('tags'))->pluck('id')->diff($company->tags->pluck('id')),false);
+            DB::commit();
+            return redirect()->back();
         } catch(\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('message', $e->getMessage());

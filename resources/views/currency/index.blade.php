@@ -23,6 +23,7 @@
                                 <tr>
                                     <th>Currency</th>
                                     <th>Created</th>
+                                    <th>Code</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -30,6 +31,7 @@
                                 <tr>
                                     <th>Currency</th>
                                     <th>Created</th>
+                                    <th>Code</th>
                                     <th></th>
                                 </tr>
                             </tfoot>
@@ -44,9 +46,7 @@
 
 @push('js')
     <script>
-        
         $(document).ready( function () {
-
             var table = $('#myTable').DataTable({
                 ajax: {
                     url: 'api/currency',
@@ -55,6 +55,7 @@
                 },
                 columns: [
                     { data: 'currency' },
+                    { data: 'code' },
                     { data: 'created_at' },
                     {
                         render: function ( data, type, row, meta ) {

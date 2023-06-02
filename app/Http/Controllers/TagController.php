@@ -8,6 +8,8 @@ use App\Http\Resources\TagResource;
 use Illuminate\Support\Facades\DB;
 use App\Events\TagRegisteredEvent;
 use App\Http\Requests\TagStoreRequest;
+use App\Http\Requests\StoreTagTagsRequest;
+use Carbon\Carbon;
 
 class TagController extends Controller
 {
@@ -108,6 +110,28 @@ class TagController extends Controller
             DB::commit();
             event(new TagRegisteredEvent('Tag Deleted'));
             return redirect('/tag');
+        } catch(\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('message', $e->getMessage());
+        }
+    }
+
+    
+    public function store_tags(StoreTagTagsRequest $request, Tag $tag)
+    {
+        DB::beginTransaction();
+        try {
+            if(!$request->input('tags')){
+                $tag->tags()->syncWithPivotValues($tag->tags->pluck('id')->toArray(),['deleted_at'=>Carbon::now()],false);
+                DB::commit();
+                return redirect()->back();
+            }
+            if($tag->tags->pluck('id')->diff(Tag::wherein('tag',$request->input('tags'))->pluck('id'))->isNotEmpty())
+                $tag->tags()->syncWithPivotValues($tag->tags->pluck('id')->diff(Tag::wherein('tag',$request->input('tags'))->pluck('id')),['deleted_at'=>Carbon::now()],false);
+            if(Tag::wherein('tag',$request->input('tags'))->pluck('id')->diff($tag->tags->pluck('id')->isNotEmpty()))
+                $tag->tags()->sync(Tag::wherein('tag',$request->input('tags'))->pluck('id')->diff($tag->tags->pluck('id')),false);
+            DB::commit();
+            return redirect()->back();
         } catch(\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('message', $e->getMessage());

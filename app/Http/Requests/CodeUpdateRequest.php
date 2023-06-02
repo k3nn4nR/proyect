@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreBrandTagsRequest extends FormRequest
+class CodeUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,7 @@ class StoreBrandTagsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'tags'      => 'nullable',
-            'tags.*'    => 'exists:tags,tag',
+            'code' => 'required|unique:codes',
         ];
     }
 }
