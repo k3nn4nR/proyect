@@ -24,7 +24,7 @@ class ItemController extends Controller
         
     public function api_index()
     {   
-        $data = ItemResource::collection(Item::all());
+        $data = ItemResource::collection(Item::all()->sortBy('item'));
         return compact('data');
     }
 

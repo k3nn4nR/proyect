@@ -27,7 +27,7 @@ class BrandController extends Controller
      */
     public function api_index()
     {
-        $data = BrandResource::collection(Brand::all());
+        $data = BrandResource::collection(Brand::all()->sortBy('brand'));
         return compact('data');
     }
 
@@ -42,10 +42,10 @@ class BrandController extends Controller
                 'brand' => mb_strtoupper($request->input('brand')),
             ]);
             DB::commit();
-            event(new BrandRegisteredEvent('Brand Registered'));
+            event(new BrandRegisteredEvent(_('Brand Registered')));
             if(!$request->header('Authorization'))
                 return redirect('/brand');
-            return response()->json('Brand registered',200);
+            return response()->json(_('Brand registered'),200);
         } catch(\Exception $e) {
             DB::rollBack();
             if(!$request->header('Authorization'))

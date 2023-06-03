@@ -27,7 +27,7 @@ class ServiceController extends Controller
      */
     public function api_index()
     {
-        $data = ServiceResource::collection(Service::all());
+        $data = ServiceResource::collection(Service::all()->sortBy('service'));
         return compact('data');
     }
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Type;
+use App\Models\Brand;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 use App\Http\Resources\TypeResource;
@@ -27,21 +28,21 @@ class TypeController extends Controller
      */
     public function api_index()
     {
-        $data = TypeResource::collection(Type::all());
+        $data = TypeResource::collection(Type::all()->sortBy('type'));
         return compact('data');
     }
 
     /**
      * Store a newly created resource in storage.
-     */
+     */ 
     public function store(TypeStoreRequest $request)
     {
         DB::beginTransaction();
         try {
-            $Type = Type::where('Type',$request->input('Type'))->get()->first();
+            $brand = Brand::where('brand',$request->input('brand'))->get()->first();
             Type::create([
                 'type' => mb_strtoupper($request->input('type')),
-                'Type_id' => $Type->id
+                'brand_id' => $brand->id
             ]);
             DB::commit();
             event(new TypeRegisteredEvent('Type Registered'));
@@ -88,12 +89,16 @@ class TypeController extends Controller
     {
         DB::beginTransaction();
         try {
-            $type->update(['type' => mb_strtoupper($request->input('type'))]);
+            $brand = Brand::where('brand',$request->input('brand'))->get()->first();
+            $type->update([
+                'type' => mb_strtoupper($request->input('type')),
+                'brand_id' => $brand->id
+            ]);
             DB::commit();
-            event(new TypeRegisteredEvent('Tag Updated'));
+            event(new TypeRegisteredEvent('Type Updated'));
             if(!$request->header('Authorization'))
-                return redirect('/tag');
-            return response()->json('Tag updated',200);
+                return redirect('/type');
+            return response()->json('Type updated',200);
         } catch(\Exception $e) {
             DB::rollBack();
             if(!$request->header('Authorization'))

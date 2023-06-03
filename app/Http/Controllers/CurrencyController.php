@@ -27,7 +27,7 @@ class CurrencyController extends Controller
      */
     public function api_index()
     {
-        $data = CurrencyResource::collection(Currency::all());
+        $data = CurrencyResource::collection(Currency::all()->sortBy('currency'));
         return compact('data');
     }
 

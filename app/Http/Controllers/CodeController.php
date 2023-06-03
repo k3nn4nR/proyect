@@ -32,7 +32,7 @@ class CodeController extends Controller
      */
     public function api_index()
     {
-        $data = CodeResource::collection(Code::all());
+        $data = CodeResource::collection(Code::all()->sortBy('code'));
         return compact('data');
     }
 

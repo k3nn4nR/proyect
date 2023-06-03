@@ -30,6 +30,24 @@
                                         @enderror
                                     </div>
                                 </div>
+                                <div class="form-group row">
+                                    <label for="brand_select">{{ __('Brand') }}</label>
+                                    <div class="col-md-6">
+                                        <select class="form-control @error('brand') is-invalid @enderror" id="brand_select" name="brand">
+                                            @foreach(App\Models\Brand::all()->sortBy('brand') as $brand)
+                                                @if($brand->id == $type->brand->id)
+                                                    <option value="{{$brand->brand}}" selected>{{$brand->brand}}</option>
+                                                @endif
+                                                <option value="{{$brand->brand}}">{{$brand->brand}}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('brand')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
                                 <div class="form-group row ">
                                     <div class="col-md-4 col-md-offset-4">
                                         <button type="submit" class="btn btn-primary btn-block" onclick="event.preventDefault(); document.getElementById('type_form').submit();">
@@ -77,6 +95,7 @@
     <script>
         $(document).ready( function () {
             var headers = { 'Content-type': 'application/json', 'Authorization': 'Bearer '+localStorage.getItem('token') }
+            var tags_select = $('#brands_select').select2();
             Echo.channel('tag-registered')
             .listen('TagRegisteredEvent', (e)=>{
                 getTags(headers)

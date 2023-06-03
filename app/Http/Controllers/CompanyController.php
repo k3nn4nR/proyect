@@ -27,7 +27,7 @@ class CompanyController extends Controller
      */
     public function api_index()
     {
-        $data = CompanyResource::collection(Company::all());
+        $data = CompanyResource::collection(Company::all()->sortBy('company'));
         return compact('data');
     }
 

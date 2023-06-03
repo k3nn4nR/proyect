@@ -26,7 +26,7 @@ class TagController extends Controller
      */
     public function api_index()
     {
-        $data = TagResource::collection(Tag::all());
+        $data = TagResource::collection(Tag::all()->sortBy('tag'));
         return compact('data');
     }
 
