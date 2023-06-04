@@ -2,7 +2,7 @@
 
 @section('title', 'Payment')
 
-
+@section('plugins.TempusDominusBootstrap4', true)
 @section('plugins.SweetAlert2', true)
 
 @section('content_header')
@@ -14,6 +14,7 @@
 @stop
 
 @section('content')
+
 <div class="row">
         <div class="col-12">
             <div class="card">
@@ -45,14 +46,32 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <label for="total">{{ __('Total') }}</label>
-                                <input type="text" name="total" id="total">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">$</span>
+                                    </div>
+                                    <input type="text" class="form-control" name="total" id="total">
+                                </div>
                             </div>
-                            <div class="col-md-9">
-                                <button class="btn btn-success col-md-3" id="add-item-row" onclick="event.preventDefault();">Add Item</button>
-                                <button class="btn btn-success col-md-3" id="add-service-row" onclick="event.preventDefault();">Add Service</button>
-                                <button class="btn btn-danger col-md-3" id="remove-row" onclick="event.preventDefault();">Remove Row</button>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="reservationdatetime">{{ __('Date and time') }}</label>
+                                    <div class="input-group date" id="reservationdatetime" data-target-input="nearest">
+                                        <input type="text" class="form-control datetimepicker-input" data-target="#reservationdatetime" name="created_at">
+                                        <div class="input-group-append" data-target="#reservationdatetime" data-toggle="datetimepicker">
+                                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <button class="btn btn-success col-md-3" id="add-item-row" onclick="event.preventDefault();">Add Item</button>
+                                    <button class="btn btn-success col-md-3" id="add-service-row" onclick="event.preventDefault();">Add Service</button>
+                                    <button class="btn btn-danger col-md-3" id="remove-row" onclick="event.preventDefault();">Remove Row</button>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -79,9 +98,9 @@
                                                 </span>
                                             @enderror
                                         </td>
-                                        <td><input type="number" name="items_amount[]" onchange="updateSubtotal($(this),this)"></td>
-                                        <td><input type="number" name="items_price[]" onchange="updateSubtotal($(this),this)"></td>
-                                        <td><input type="number" name="items_subtotal[]"></td>
+                                        <td><input type="number" class="form-control" name="items_amount[]" onchange="updateSubtotal($(this),this)"></td>
+                                        <td><input type="number" class="form-control" name="items_price[]" onchange="updateSubtotal($(this),this)"></td>
+                                        <td><input type="number" class="form-control" name="items_subtotal[]"></td>
                                     </tr>
                                     <tr>
                                         <td><input type="checkbox" id="select-row"></td>
@@ -90,9 +109,9 @@
                                                 <option>Choose One..</option>
                                             </select>
                                         </td>
-                                        <td><input type="number" name="services_amount[]" onchange="updateSubtotal($(this),this)"></td>
-                                        <td><input type="number" name="services_price[]" onchange="updateSubtotal($(this),this)"></td>
-                                        <td><input type="number" name="services_subtotal[]"></td>
+                                        <td><input type="number" class="form-control" name="services_amount[]" onchange="updateSubtotal($(this),this)"></td>
+                                        <td><input type="number" class="form-control" name="services_price[]" onchange="updateSubtotal($(this),this)"></td>
+                                        <td><input type="number" class="form-control" name="services_subtotal[]"></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -114,40 +133,36 @@
 
 @push('js')
     <script>
-        const tableBody = document.getElementById("myTableBody");
         var items, services;
         $(document).ready( function () {
+            $('#reservationdatetime').datetimepicker({ icons: { time: 'far fa-clock' } });
             let headers = { 'Content-type': 'application/json', 'Authorization': 'Bearer '+localStorage.getItem('token') };
-
             getCompanies(headers)
             getCurrencies(headers)
             getItems(headers)
             getServices(headers)
-
             $("#add-item-row").click(function(){
                 $(".table tbody tr").last().after(
                     '<tr>'+
                         '<td><input type="checkbox" id="select-row"></td>'+
                         '<td>'+items+'</td>'+
-                        '<td><input type="number" name="items_amount[]" onchange="updateSubtotal($(this),this)"></td>'+
-                        '<td><input type="number" name="items_price[]" onchange="updateSubtotal($(this),this)"></td>'+
-                        '<td><input type="number" name="items_subtotal[]"></td>'+
+                        '<td><input type="number" class="form-control" name="items_amount[]" onchange="updateSubtotal($(this),this)"></td>'+
+                        '<td><input type="number" class="form-control" name="items_price[]" onchange="updateSubtotal($(this),this)"></td>'+
+                        '<td><input type="number" class="form-control" name="items_subtotal[]"></td>'+
                     '</tr>'
                 );
             })
-
             $("#add-service-row").click(function(){
                 $(".table tbody tr").last().after(
                     '<tr>'+
                         '<td><input type="checkbox" id="select-row"></td>'+
                         '<td>'+services+'</td>'+
-                        '<td><input type="number" name="services_amount[]" onchange="updateSubtotal($(this),this)"></td>'+
-                        '<td><input type="number" name="services_price[]" onchange="updateSubtotal($(this),this)"></td>'+
-                        '<td><input type="number" name="services_subtotal[]"></td>'+
+                        '<td><input type="number" class="form-control" name="services_amount[]" onchange="updateSubtotal($(this),this)"></td>'+
+                        '<td><input type="number" class="form-control" name="services_price[]" onchange="updateSubtotal($(this),this)"></td>'+
+                        '<td><input type="number" class="form-control" name="services_subtotal[]"></td>'+
                     '</tr>'
                 );
             })
-
             $("#select-all").click(function(){
                 var isSelected = $(this).is(":checked");
                 if(isSelected){
@@ -160,7 +175,6 @@
                     })
                 }
             });
-
             $("#remove-row").click(function(){
                 $(".table tbody tr").each(function(){
                     var isChecked = $(this).find('input[type="checkbox"]').is(":checked");
@@ -176,6 +190,8 @@
                     }
                 });
             });
+            if({!! json_encode($errors->any()) !!})
+                Swal.fire('Error!',{!! json_encode($errors->first()) !!},'error')
         });
 
         function updateSubtotal(object,value){
@@ -210,6 +226,7 @@
                 }
             })
         }
+
         function getCurrencies(headers){
             $.ajax({
                 url: route('currency.api_index'),
@@ -228,6 +245,7 @@
                 }
             })
         }
+
         function getItems(headers){
             $.ajax({
                 url: route('item.api_index'),
@@ -249,6 +267,7 @@
                 }
             })
         }
+
         function getServices(headers){
             $.ajax({
                 url: route('service.api_index'),

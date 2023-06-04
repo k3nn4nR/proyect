@@ -22,16 +22,17 @@ class PaymentStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'company'   => 'required|exists:companies',
-            'currency'  => 'required|exists:currencies',
-            'items'   => 'filled',
-            'services'=> 'filled',
-            'items.*'   => 'required|exists:items,item',
-            'services.*'=> 'required|exists:services,service',
-            'items_ammount.*' => 'required_with:items',
-            'items_price.*'   => 'required_with:items',
-            'services_ammount.*'  => 'required_with:services',
-            'services_price.*'    => 'required_with:services',
+            'created_at'            => 'nullable',
+            'company'               => 'required|exists:companies',
+            'currency'              => 'required|exists:currencies',
+            'items'                 => 'filled',
+            'services'              => 'filled',
+            'items.*'               => 'required|exists:items,item',
+            'services.*'            => 'required|exists:services,service',
+            'items_ammount.*'       => 'required_with:items',
+            'items_price.*'         => 'required_with:items',
+            'services_ammount.*'    => 'required_with:services',
+            'services_price.*'      => 'required_with:services',
         ];
     }
 }

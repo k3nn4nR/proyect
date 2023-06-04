@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Carbon\Carbon;
 
 class TypeResource extends JsonResource
 {
@@ -16,7 +17,7 @@ class TypeResource extends JsonResource
     {
         return [
             'type' => $this->type,
-            'created_at' => $this->created_at,
+            'created_at' => Carbon::create($this->created_at)->toDateTimeString(),
         ];
     }
 }

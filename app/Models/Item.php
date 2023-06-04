@@ -28,4 +28,12 @@ class Item extends Model
     {
         return $this->morphMany(Code::class, 'codeable');
     }
+
+     /**
+     * Get all of the codes of this item.
+     */
+    public function inventories(): MorphMany
+    {
+        return $this->morphMany(Inventory::class, 'inventoryable');
+    }
 }

@@ -32,6 +32,14 @@
          $(document).ready( function () {
             let headers = { 'Content-type': 'application/json', 'Authorization': 'Bearer '+localStorage.getItem('token') };
             getInventory(headers)
+            Echo.channel('payment-registered')
+            .listen('PaymentRegisteredEvent', (e)=>{
+                for(var i = 0 ; $('#vert-tabs-tab').children().length ; i++)
+                    $('#vert-tabs-tab').children()[i].remove()
+                for(var i = 0 ; $('#vert-tabs-tabContent').children().length ; i++)
+                    $('#vert-tabs-tabContent').children()[i].remove()
+                getInventory(headers)
+            });
         });
 
         function getInventory(headers){

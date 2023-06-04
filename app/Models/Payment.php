@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 class Payment extends Model
 {
     use HasFactory;
-    protected $fillable = ['company_id','currency_id','total'];
+    protected $fillable = ['company_id','currency_id','total','created_at'];
 
     /**
      * Get the company that owns the payment.

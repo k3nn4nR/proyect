@@ -7,11 +7,13 @@ use App\Models\Company;
 use App\Models\Currency;
 use App\Models\Item;
 use App\Models\Tag;
+use App\Models\Warehouse;
 use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\PaymentResource;
 use App\Events\PaymentRegisteredEvent;
+use App\Events\InventoryLoadEvent;
 use App\Http\Requests\PaymentStoreRequest;
 use App\Http\Requests\StorePaymentTagsRequest;
 use Carbon\Carbon;
@@ -51,12 +53,18 @@ class PaymentController extends Controller
     {
         DB::beginTransaction();
         try {
+            if(!$request->header('Authorization') && Warehouse::all()->isEmpty())
+                return redirect()->back()->withErrors(['message' => 'No Warehouse created']);
+            if($request->header('Authorization') && Warehouse::all()->isEmpty())
+                return response()->json('No Warehouse to store',200);
             $company = Company::where('company',$request->input('company'))->get()->first();
             $currency = Currency::where('currency',$request->input('currency'))->get()->first();
             $payment = Payment::create([
                 'company_id' => $company->id,
                 'currency_id' => $currency->id,
                 'total' => $request->input('total'),
+                'created_at' => ($request->input('created_at')) ? Carbon::create($request->input('created_at'))->toDateTimeString() : Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
             $position = 0;
             if($request->input('services')){
@@ -84,6 +92,7 @@ class PaymentController extends Controller
             }
             DB::commit();
             event(new PaymentRegisteredEvent('Payment Registered'));
+            event(new InventoryLoadEvent($payment));
             if(!$request->header('Authorization'))
                 return redirect('/payment');
             return response()->json('Payment registered',200);

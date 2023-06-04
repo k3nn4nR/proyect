@@ -13,7 +13,8 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 class Inventory extends Model
 {
     use HasFactory, SoftDeletes;
-    protected $fillable = ['warehouse_id', 'inventoryale_id', 'inventoryale_type','amount'];
+    protected $fillable = ['warehouse_id', 'inventoryable_id', 'inventoryable_type','amount'];
+    
 
         /**
      * Get the brand that owns the type.

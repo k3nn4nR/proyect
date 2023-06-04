@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Carbon\Carbon;
 
 class CurrencyResource extends JsonResource
 {
@@ -16,8 +17,8 @@ class CurrencyResource extends JsonResource
     {
         return [
             'currency' => $this->currency,
-            'code' => $this->codes->first()->code,
-            'created_at' => $this->created_at,
+            'code' => ($this->codes) ? '' : $this->codes->first()->code,
+            'created_at' => Carbon::create($this->created_at)->toDateTimeString(),
         ];
     }
 }
