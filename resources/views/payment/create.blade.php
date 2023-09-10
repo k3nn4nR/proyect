@@ -70,6 +70,7 @@
                                 <div class="form-group">
                                     <button class="btn btn-success col-md-3" id="add-item-row" onclick="event.preventDefault();">Add Item</button>
                                     <button class="btn btn-success col-md-3" id="add-service-row" onclick="event.preventDefault();">Add Service</button>
+                                    <button class="btn btn-success col-md-3" id="add-type-row" onclick="event.preventDefault();">Add Type</button>
                                     <button class="btn btn-danger col-md-3" id="remove-row" onclick="event.preventDefault();">Remove Row</button>
                                 </div>
                             </div>
@@ -105,13 +106,34 @@
                                     <tr>
                                         <td><input type="checkbox" id="select-row"></td>
                                         <td>
-                                            <select class="form-control" id="services_select" name="services[]">
+                                            <select class="form-control @error('services') is-invalid @enderror" id="services_select" name="services[]">
                                                 <option>Choose One..</option>
                                             </select>
+                                            @error('services')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
                                         </td>
                                         <td><input type="number" class="form-control" name="services_amount[]" onchange="updateSubtotal($(this),this)"></td>
                                         <td><input type="number" class="form-control" name="services_price[]" onchange="updateSubtotal($(this),this)"></td>
                                         <td><input type="number" class="form-control" name="services_subtotal[]"></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="checkbox" id="select-row"></td>
+                                        <td>
+                                            <select class="form-control @error('types') is-invalid @enderror" id="types_select" name="types[]">
+                                                <option>Choose One..</option>
+                                            </select>
+                                            @error('types')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </td>
+                                        <td><input type="number" class="form-control" name="types_amount[]" onchange="updateSubtotal($(this),this)"></td>
+                                        <td><input type="number" class="form-control" name="types_price[]" onchange="updateSubtotal($(this),this)"></td>
+                                        <td><input type="number" class="form-control" name="types_subtotal[]"></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -133,7 +155,7 @@
 
 @push('js')
     <script>
-        var items, services;
+        var items, services, types;
         $(document).ready( function () {
             $('#reservationdatetime').datetimepicker({ icons: { time: 'far fa-clock' } });
             let headers = { 'Content-type': 'application/json', 'Authorization': 'Bearer '+localStorage.getItem('token') };
@@ -141,6 +163,7 @@
             getCurrencies(headers)
             getItems(headers)
             getServices(headers)
+            getTypes(headers)
             $("#add-item-row").click(function(){
                 $(".table tbody tr").last().after(
                     '<tr>'+
@@ -160,6 +183,17 @@
                         '<td><input type="number" class="form-control" name="services_amount[]" onchange="updateSubtotal($(this),this)"></td>'+
                         '<td><input type="number" class="form-control" name="services_price[]" onchange="updateSubtotal($(this),this)"></td>'+
                         '<td><input type="number" class="form-control" name="services_subtotal[]"></td>'+
+                    '</tr>'
+                );
+            })
+            $("#add-type-row").click(function(){
+                $(".table tbody tr").last().after(
+                    '<tr>'+
+                        '<td><input type="checkbox" id="select-row"></td>'+
+                        '<td>'+types+'</td>'+
+                        '<td><input type="number" class="form-control" name="types_amount[]" onchange="updateSubtotal($(this),this)"></td>'+
+                        '<td><input type="number" class="form-control" name="types_price[]" onchange="updateSubtotal($(this),this)"></td>'+
+                        '<td><input type="number" class="form-control" name="types_subtotal[]"></td>'+
                     '</tr>'
                 );
             })
@@ -185,13 +219,12 @@
                             'At least 1 row is expected!',
                             'error'
                         )
-                    }else if(isChecked){
+                    }
+                    if(isChecked && tableSize > 1){
                         $(this).remove();
                     }
                 });
             });
-            if({!! json_encode($errors->any()) !!})
-                Swal.fire('Error!',{!! json_encode($errors->first()) !!},'error')
         });
 
         function updateSubtotal(object,value){
@@ -261,6 +294,28 @@
                         items += '<option value="'+response.data[i].item+'">'+response.data[i].item+'</option>'
                     }
                     items += '</select>'
+                },
+                error: function (data) {
+                    console.log(data)
+                }
+            })
+        }
+
+        function getTypes(headers){
+            $.ajax({
+                url: route('type.api_index'),
+                headers: headers,
+                success: function (response) {
+                    var select = $('#types_select');
+                    types = '<select class="form-control" id="types_select" name="types[]"><option>Choose One..</option>'
+                    for (var i = 0; i < response.data.length; i++){
+                        var added = document.createElement('option');
+                        added.value = response.data[i].type;
+                        added.innerHTML = response.data[i].type;
+                        select.append(added);
+                        types += '<option value="'+response.data[i].type+'">'+response.data[i].type+'</option>'
+                    }
+                    types += '</select>'
                 },
                 error: function (data) {
                     console.log(data)

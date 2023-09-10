@@ -50,10 +50,10 @@ class ServiceController extends Controller
                 'service' => mb_strtoupper($request->input('service')),
             ]);
             DB::commit();
-            event(new ServiceRegisteredEvent('Service Registered'));
+            event(new ServiceRegisteredEvent(_('Service Registered')));
             if(!$request->header('Authorization'))
                 return redirect('/service');
-            return response()->json('Service registered',200);
+            return response()->json(_('Service registered',200));
         } catch(\Exception $e) {
             DB::rollBack();
             if(!$request->header('Authorization'))
@@ -91,7 +91,7 @@ class ServiceController extends Controller
             event(new ServiceRegisteredEvent('Service Updated'));
             if(!$request->header('Authorization'))
                 return redirect('/service');
-            return response()->json('Service updated',200);
+            return response()->json(_('Service updated',200));
         } catch(\Exception $e) {
             DB::rollBack();
             if(!$request->header('Authorization'))
@@ -109,7 +109,7 @@ class ServiceController extends Controller
         try {
             $service = Service::where('service',$service)->get()->first()->delete();
             DB::commit();
-            event(new ServiceRegisteredEvent('Service Deleted'));
+            event(new ServiceRegisteredEvent(_('Service Deleted')));
             return redirect('/service');
         } catch(\Exception $e) {
             DB::rollBack();

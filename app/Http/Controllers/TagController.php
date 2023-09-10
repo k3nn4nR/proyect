@@ -49,10 +49,10 @@ class TagController extends Controller
                 'tag' => mb_strtoupper($request->input('tag')),
             ]);
             DB::commit();
-            event(new TagRegisteredEvent('Tag Registered'));
+            event(new TagRegisteredEvent(_('Tag Registered')));
             if(!$request->header('Authorization'))
                 return redirect('/tag');
-            return response()->json('Tag registered',200);
+            return response()->json(_('Tag registered',200));
         } catch(\Exception $e) {
             DB::rollBack();
             if(!$request->header('Authorization'))
@@ -87,10 +87,10 @@ class TagController extends Controller
         try {
             $tag->update(['tag' => mb_strtoupper($request->input('tag'))]);
             DB::commit();
-            event(new TagRegisteredEvent('Tag Updated'));
+            event(new TagRegisteredEvent(_('Tag Updated')));
             if(!$request->header('Authorization'))
                 return redirect('/tag');
-            return response()->json('Tag updated',200);
+            return response()->json(_('Tag updated',200));
         } catch(\Exception $e) {
             DB::rollBack();
             if(!$request->header('Authorization'))
@@ -108,7 +108,7 @@ class TagController extends Controller
         try {
             $tag = Tag::where('tag',$tag)->get()->first()->delete();
             DB::commit();
-            event(new TagRegisteredEvent('Tag Deleted'));
+            event(new TagRegisteredEvent(_('Tag Deleted')));
             return redirect('/tag');
         } catch(\Exception $e) {
             DB::rollBack();

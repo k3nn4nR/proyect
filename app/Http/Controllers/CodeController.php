@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use App\Http\Resources\CodeResource;
 use Illuminate\Support\Facades\DB;
 use App\Events\CodeRegisteredEvent;
+
 use App\Http\Requests\CodeStoreRequest;
 use App\Http\Requests\StoreCodeTagsRequest;
 use App\Http\Requests\CodeUpdateRequest;
@@ -52,15 +53,15 @@ class CodeController extends Controller
         DB::beginTransaction();
         try {
             $store = ($request->input('brand')) ? Brand::where('brand',$request->input('brand'))->get()->first() : 
-            ($request->input('type') ? Type::where('type',$request->input('type'))->get()->first() : 
-            ($request->input('currency') ? Currency::where('currency',$request->input('currency'))->get()->first() : 
-            Item::where('item',$request->input('item'))->get()->first()));
+                     ($request->input('type') ? Type::where('type',$request->input('type'))->get()->first() : 
+                     ($request->input('currency') ? Currency::where('currency',$request->input('currency'))->get()->first() : 
+                     Item::where('item',$request->input('item'))->get()->first()));
             $store->codes()->create(['code' => mb_strtoupper($request->input('code')),]);
             DB::commit();
-            event(new CodeRegisteredEvent('Code Registered'));
+            event(new CodeRegisteredEvent(_('Code Registered')));
             if(!$request->header('Authorization'))
                 return redirect('/code');
-            return response()->json('Code registered',200);
+            return response()->json(_('Code registered',200));
         } catch(\Exception $e) {
             DB::rollBack();
             if(!$request->header('Authorization'))
@@ -95,10 +96,10 @@ class CodeController extends Controller
         try {
             $code->update(['code' => mb_strtoupper($request->input('code'))]);
             DB::commit();
-            event(new CodeRegisteredEvent('Code Updated'));
+            event(new CodeRegisteredEvent(_('Code Updated')));
             if(!$request->header('Authorization'))
                 return redirect('/code');
-            return response()->json('Code updated',200);
+            return response()->json(_('Code updated',200));
         } catch(\Exception $e) {
             DB::rollBack();
             if(!$request->header('Authorization'))
@@ -116,7 +117,7 @@ class CodeController extends Controller
         try {
             $code = Code::where('code',$code)->get()->first()->delete();
             DB::commit();
-            event(new CodeRegisteredEvent('Code Deleted'));
+            event(new CodeRegisteredEvent(_('Code Deleted')));
             return redirect('/code');
         } catch(\Exception $e) {
             DB::rollBack();

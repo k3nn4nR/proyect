@@ -45,10 +45,10 @@ class TypeController extends Controller
                 'brand_id' => $brand->id
             ]);
             DB::commit();
-            event(new TypeRegisteredEvent('Type Registered'));
+            event(new TypeRegisteredEvent(_('Type Registered')));
             if(!$request->header('Authorization'))
                 return redirect('/type');
-            return response()->json('Type registered',200);
+            return response()->json(_('Type registered',200));
         } catch(\Exception $e) {
             DB::rollBack();
             if(!$request->header('Authorization'))
@@ -95,10 +95,10 @@ class TypeController extends Controller
                 'brand_id' => $brand->id
             ]);
             DB::commit();
-            event(new TypeRegisteredEvent('Type Updated'));
+            event(new TypeRegisteredEvent(_('Type Updated')));
             if(!$request->header('Authorization'))
                 return redirect('/type');
-            return response()->json('Type updated',200);
+            return response()->json(_('Type updated',200));
         } catch(\Exception $e) {
             DB::rollBack();
             if(!$request->header('Authorization'))
@@ -116,7 +116,7 @@ class TypeController extends Controller
         try {
             $type = Type::where('type',$type)->get()->first()->delete();
             DB::commit();
-            event(new TypeRegisteredEvent('Type Deleted'));
+            event(new TypeRegisteredEvent(_('Type Deleted')));
             return redirect('/type');
         } catch(\Exception $e) {
             DB::rollBack();

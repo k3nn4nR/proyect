@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Inventory;
 use App\Models\Warehouse;
+use App\Models\Item;
+use App\Models\Type;
+use App\Models\Code;
 use Illuminate\Http\Request;
 use App\Http\Resources\InventoryResource;
 
@@ -72,5 +75,15 @@ class InventoryController extends Controller
     public function destroy(Inventory $inventory)
     {
         //
+    }
+    
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function consume($warehouse, $search)
+    {
+        dd(Warehouse::where('warehouse',$warehouse)->get()->first());
+        dd(Item::where('item',$search)->get()->first());
+        dd(Type::where('type',$search)->get()->first());
     }
 }

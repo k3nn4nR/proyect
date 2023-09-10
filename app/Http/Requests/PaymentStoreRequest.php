@@ -26,13 +26,17 @@ class PaymentStoreRequest extends FormRequest
             'company'               => 'required|exists:companies',
             'currency'              => 'required|exists:currencies',
             'items'                 => 'filled',
+            'types'                 => 'filled',
             'services'              => 'filled',
             'items.*'               => 'required|exists:items,item',
+            'types.*'               => 'required|exists:types,type',
             'services.*'            => 'required|exists:services,service',
             'items_ammount.*'       => 'required_with:items',
             'items_price.*'         => 'required_with:items',
             'services_ammount.*'    => 'required_with:services',
             'services_price.*'      => 'required_with:services',
+            'types_ammount.*'       => 'required_with:types',
+            'types_price.*'         => 'required_with:types',
         ];
     }
 }

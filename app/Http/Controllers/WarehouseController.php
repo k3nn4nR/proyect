@@ -50,10 +50,10 @@ class WarehouseController extends Controller
                 'warehouse' => mb_strtoupper($request->input('warehouse')),
             ]);
             DB::commit();
-            event(new WarehouseRegisteredEvent('Warehouse Registered'));
+            event(new WarehouseRegisteredEvent(_('Warehouse Registered')));
             if(!$request->header('Authorization'))
                 return redirect('/warehouse');
-            return response()->json('Warehouse registered',200);
+            return response()->json(_('Warehouse registered',200));
         } catch(\Exception $e) {
             DB::rollBack();
             if(!$request->header('Authorization'))
@@ -88,10 +88,10 @@ class WarehouseController extends Controller
         try {
             $warehouse->update(['warehouse' => mb_strtoupper($request->input('warehouse'))]);
             DB::commit();
-            event(new WarehouseRegisteredEvent('Warehouse Updated'));
+            event(new WarehouseRegisteredEvent(_('Warehouse Updated')));
             if(!$request->header('Authorization'))
                 return redirect('/warehouse');
-            return response()->json('Warehouse updated',200);
+            return response()->json(_('Warehouse updated',200));
         } catch(\Exception $e) {
             DB::rollBack();
             if(!$request->header('Authorization'))
@@ -109,7 +109,7 @@ class WarehouseController extends Controller
         try {
             $warehouse = Warehouse::where('warehouse',$warehouse)->get()->first()->delete();
             DB::commit();
-            event(new WarehouseRegisteredEvent('Warehouse Deleted'));
+            event(new WarehouseRegisteredEvent(_('Warehouse Deleted')));
             return redirect('/warehouse');
         } catch(\Exception $e) {
             DB::rollBack();

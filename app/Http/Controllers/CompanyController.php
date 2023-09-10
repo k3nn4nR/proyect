@@ -50,10 +50,10 @@ class CompanyController extends Controller
                 'company' => mb_strtoupper($request->input('company')),
             ]);
             DB::commit();
-            event(new CompanyRegisteredEvent('Company Registered'));
+            event(new CompanyRegisteredEvent(_('Company Registered')));
             if(!$request->header('Authorization'))
                 return redirect('/company');
-            return response()->json('Company registered',200);
+            return response()->json(_('Company registered',200));
         } catch(\Exception $e) {
             DB::rollBack();
             if(!$request->header('Authorization'))
@@ -88,10 +88,10 @@ class CompanyController extends Controller
         try {
             $company->update(['company' => mb_strtoupper($request->input('company'))]);
             DB::commit();
-            event(new CompanyRegisteredEvent('Company Updated'));
+            event(new CompanyRegisteredEvent(_('Company Updated')));
             if(!$request->header('Authorization'))
                 return redirect('/company');
-            return response()->json('Company updated',200);
+            return response()->json(_('Company updated',200));
         } catch(\Exception $e) {
             DB::rollBack();
             if(!$request->header('Authorization'))
@@ -109,7 +109,7 @@ class CompanyController extends Controller
         try {
             $company = Company::where('company',$company)->get()->first()->delete();
             DB::commit();
-            event(new CompanyRegisteredEvent('Company Deleted'));
+            event(new CompanyRegisteredEvent(_('Company Deleted')));
             return redirect('/company');
         } catch(\Exception $e) {
             DB::rollBack();

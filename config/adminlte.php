@@ -599,6 +599,18 @@ return [
                 ],
             ],
         ],
+        'ApexCharts' => [
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => false,
+                    'location' => '//cdn.jsdelivr.net/npm/apexcharts',
+                ],
+            ],
+        ],
+
+        
     ],
 
     /*

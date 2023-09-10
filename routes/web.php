@@ -66,12 +66,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::name('inventory.')->group(function () {
         Route::controller(App\Http\Controllers\InventoryController::class)->group(function () {
             Route::get('/inventory', 'index')->name('index');
+            Route::post('/inventory/{warehousse}/{search}', 'consume')->name('consume');
         });
     });
 
     Route::name('payment.')->group(function () {
         Route::controller(App\Http\Controllers\PaymentController::class)->group(function () {
             Route::post('/payment/{payment}/tags','store_tags')->name('store_tags');
+            Route::post('/payment/{payment}/type_code','type_code')->name('type_code');
         });
     });
 

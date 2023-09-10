@@ -39,10 +39,10 @@ class ItemController extends Controller
                 'item' => mb_strtoupper($request->input('item')),
             ]);
             DB::commit();
-            event(new ItemRegisteredEvent('Item Registered'));
+            event(new ItemRegisteredEvent(_('Item Registered')));
             if(!$request->header('Authorization'))
                 return redirect('/item');
-            return response()->json('Item registered',200);
+            return response()->json(_('Item registered',200));
         } catch(\Exception $e) {
             DB::rollBack();
             if(!$request->header('Authorization'))
@@ -85,10 +85,10 @@ class ItemController extends Controller
         try {
             $item->update(['item' => mb_strtoupper($request->input('item'))]);
             DB::commit();
-            event(new ItemRegisteredEvent('Item Updated'));
+            event(new ItemRegisteredEvent(_('Item Updated')));
             if(!$request->header('Authorization'))
                 return redirect('/item');
-            return response()->json('Item updated',200);
+            return response()->json(_('Item updated',200));
         } catch(\Exception $e) {
             DB::rollBack();
             if(!$request->header('Authorization'))
@@ -106,7 +106,7 @@ class ItemController extends Controller
         try {
             $item = Item::where('item',$item)->get()->first()->delete();
             DB::commit();
-            event(new ItemRegisteredEvent('Item Deleted'));
+            event(new ItemRegisteredEvent(_('Item Deleted')));
             return redirect('/item');
         } catch(\Exception $e) {
             DB::rollBack();

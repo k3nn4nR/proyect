@@ -50,10 +50,10 @@ class CurrencyController extends Controller
                 'currency' => mb_strtoupper($request->input('currency')),
             ]);
             DB::commit();
-            event(new CurrencyRegisteredEvent('Currency Registered'));
+            event(new CurrencyRegisteredEvent(_('Currency Registered')));
             if(!$request->header('Authorization'))
                 return redirect('/currency');
-            return response()->json('Currency registered',200);
+            return response()->json(_('Currency registered',200));
         } catch(\Exception $e) {
             DB::rollBack();
             if(!$request->header('Authorization'))
@@ -88,10 +88,10 @@ class CurrencyController extends Controller
         try {
             $currency->update(['currency' => mb_strtoupper($request->input('currency'))]);
             DB::commit();
-            event(new CurrencyRegisteredEvent('Currency Updated'));
+            event(new CurrencyRegisteredEvent(_('Currency Updated')));
             if(!$request->header('Authorization'))
                 return redirect('/currency');
-            return response()->json('Currency updated',200);
+            return response()->json(_('Currency updated',200));
         } catch(\Exception $e) {
             DB::rollBack();
             if(!$request->header('Authorization'))
@@ -109,7 +109,7 @@ class CurrencyController extends Controller
         try {
             $currency = Currency::where('currency',$currency)->get()->first()->delete();
             DB::commit();
-            event(new CurrencyRegisteredEvent('Currency Deleted'));
+            event(new CurrencyRegisteredEvent(_('Currency Deleted')));
             return redirect('/currency');
         } catch(\Exception $e) {
             DB::rollBack();

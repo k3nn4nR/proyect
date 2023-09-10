@@ -88,10 +88,10 @@ class BrandController extends Controller
         try {
             $brand->update(['brand' => mb_strtoupper($request->input('brand'))]);
             DB::commit();
-            event(new BrandRegisteredEvent('Brand Updated'));
+            event(new BrandRegisteredEvent(_('Brand Updated')));
             if(!$request->header('Authorization'))
                 return redirect('/brand');
-            return response()->json('Brand updated',200);
+            return response()->json(_('Brand updated',200));
         } catch(\Exception $e) {
             DB::rollBack();
             if(!$request->header('Authorization'))
@@ -109,7 +109,7 @@ class BrandController extends Controller
         try {
             $brand = Brand::where('brand',$brand)->get()->first()->delete();
             DB::commit();
-            event(new BrandRegisteredEvent('Brand Deleted'));
+            event(new BrandRegisteredEvent(_('Brand Deleted')));
             return redirect('/brand');
         } catch(\Exception $e) {
             DB::rollBack();

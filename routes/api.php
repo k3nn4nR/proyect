@@ -65,6 +65,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::name('payment.')->group(function () {
         Route::controller(App\Http\Controllers\PaymentController::class)->group(function () {
             Route::get('/payment', 'api_index')->name('api_index');
+            Route::get('/payment/api_payments_last_month', 'api_payments_last_month')->name('api_payments_last_month');
+            Route::get('/payment/api_payments_last_six_months', 'api_payments_last_six_months')->name('api_payments_last_six_months');
             Route::post('/payment', 'store')->name('api_store');
         });
     });

@@ -51,7 +51,7 @@ class InventoryLoadEvent
                             'warehouse_id'  => $last->warehouse_id,
                             'inventoryable_id'  => $last->inventoryable_id,
                             'inventoryable_type'    => $last->inventoryable_type,
-                            'amount'    => $last->amount + $item->pivot->amount,
+                            'amount'    => $last->amount + $type->pivot->amount,
                         ]);
                         $last->delete();
                     }else{

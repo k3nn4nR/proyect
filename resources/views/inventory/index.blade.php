@@ -65,14 +65,15 @@
                         add_div.id = "vert-tabs-"+response.data[i].warehouse
                         add_div.role = "tabpanel"
                         add_div.setAttribute('aria-labelledby', "vert-tabs-settings-tab")
-                        add_div.innerHTML =  '<div class="row">'+
+                        add_div.innerHTML = '<div class="card-body">'+
                         '<div class="table-responsive">'+
-                            '<table id="myTable" class="table table-bordered table-striped table-hover">'+
+                            '<table id="myTable-'+response.data[i].warehouse+'" class="table table-bordered table-striped table-hover" style="width:100%">'+
                                 '<thead>'+
                                     '<tr>'+
                                         '<th>Item</th>'+
                                         '<th>Code</th>'+
                                         '<th>Amount</th>'+
+                                        '<th></th>'+
                                     '</tr>'+
                                 '</thead>'+
                                 '<tfoot>'+
@@ -80,17 +81,24 @@
                                         '<th>Item</th>'+
                                         '<th>Code</th>'+
                                         '<th>Amount</th>'+
+                                        '<th></th>'+
                                     '</tr>'+
                                 '</tfoot>'+
                             '</table>'+
                         '</div></div>'
                         tab_content.append(add_div);
-                        var table = $('#myTable').DataTable({
+                        var table = $('#myTable-'+response.data[i].warehouse).DataTable({
                             data: response.data[i].inventory,
                             columns: [
                                 { data: 'item' },
                                 { data: 'code' },
                                 { data: 'amount' },
+                                {
+                                    render: function ( data, type, row, meta ) {
+                                        return '<form action="'+route('inventory.consume',[response.data[i].warehouse,row.item])+'" method="post"> @csrf'+
+                                        '<button class="btn btn-sm btn-danger" type="submit"><i class="fa fa-trash"></i></button></form>'
+                                    },
+                                }
                             ],
                         });
                     }
