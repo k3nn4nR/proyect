@@ -145,17 +145,10 @@
             url: route('payment.api_payments_last_six_months'),
             headers: headers,
             success: function (response) {
-                const series_formated = [];
-                for (let i = 0; i<response.six_months_x_axis.length;i++) {
-                    var obj = {};
-                    obj["x"] = new Date(response.six_months_x_axis[i]).getTime(),
-                    obj["y"] = response.six_months_y_axis[i]
-                    series_formated.push(obj)
-                }
                 var options3 = {
                     series: [{
                         name: 'Payment',
-                        data: series_formated
+                        data: response.data
                     }],
                     chart: {
                         type: 'area',
