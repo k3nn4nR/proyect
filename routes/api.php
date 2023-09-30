@@ -59,6 +59,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::name('inventory.')->group(function () {
         Route::controller(App\Http\Controllers\InventoryController::class)->group(function () {
             Route::get('/inventory', 'api_index')->name('api_index');
+            Route::get('/inventory_current_goods', 'api_current_goods')->name('api_current_goods');
         });
     });
 
@@ -82,6 +83,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::controller(App\Http\Controllers\TagController::class)->group(function () {
             Route::get('/tag', 'api_index')->name('api_index');
             Route::post('/tag', 'store')->name('api_store');
+            Route::get('/tag_current_goods', 'api_current_tag_goods')->name('api_current_tag_goods');
+            Route::get('/{tag}/items', 'api_tag_items')->name('api_tag_items');
         });
     });
 

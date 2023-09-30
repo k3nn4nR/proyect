@@ -218,18 +218,14 @@ class PaymentController extends Controller
          * nesbot/Carbon timestam attribute returs timestamp upto second, while ApexCharts is expectin a milisecond timestamp
          * thats why we are multiplying by 1000
          */
-        $data = TotalDayPayments::collection(
+        $total_daily_payments = TotalDayPayments::collection(
             Payment::whereBetween('created_at',[Carbon::now()->subMonths(6)->toDateTimeString(),Carbon::now()->endOfDay()->toDateTimeString()])->get()
         )->sortBy('created_at');
-        $six_months_x_axis = $data->pluck('created_at');
-        $six_months_y_axis = $data->pluck('total');
-
-        $data = collect();
-        for($i=0;$i<count($six_months_x_axis);$i++){
-            //pushing the object {x=>value,y=>value} to the array, while formating the timestamp from second to milisecond
-            $data->push(['x'=>$six_months_x_axis[$i]->timestamp*1000,'y'=>$six_months_y_axis[$i]]);
-        }
-        return compact('data','six_months_x_axis','six_months_y_axis');
+        $data = $total_daily_payments->map(function ($item) {
+            //     //pushing the object {x=>value,y=>value} to the array, while formating the timestamp from second to milisecond
+            return ['x'=>$item->created_at->timestamp*1000,'y'=>$item->total];
+        });
+        return compact('data');
     }
 
     public function type_code(Payment $payment, Request $request)

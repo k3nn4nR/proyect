@@ -66,6 +66,20 @@
                         </div>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group clearfix">
+                                    <div class="icheck-primary d-inline">
+                                        <input type="checkbox" id="checkboxPrimary3">
+                                        <label for="checkboxPrimary3">Primary checkbox</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -81,6 +95,7 @@
                 getTags(headers)
             });
             getTags(headers);
+            getItems(headers);
         });
 
         function getTags(headers){
@@ -98,6 +113,19 @@
                             added.selected = true
                         tags_select.append(added);
                     }
+                },
+                error: function (data) {
+                    console.log(data)
+                }
+            })
+        }
+
+        function getItems(headers){
+            $.ajax({
+                url: route('tag.api_tag_items',{!! json_encode($tag->tag) !!}),
+                headers: headers,
+                success: function (response) {
+                   
                 },
                 error: function (data) {
                     console.log(data)

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Tag;
+use App\Models\Item;
 use Illuminate\Http\Request;
 use App\Http\Resources\TagResource;
 use Illuminate\Support\Facades\DB;
@@ -136,5 +137,39 @@ class TagController extends Controller
             DB::rollBack();
             return redirect()->back()->with('message', $e->getMessage());
         }
+    }
+
+    public function api_current_tag_goods()
+    {
+        /**
+         * $inventories = InventoryResource::collection(Warehouse::all());
+         * suatoria de bienes totales del inventario
+        */
+        $tags = Tag::with('items.inventories')->get();
+        $data = $tags->map(function ($tag) {
+            if($tag->items->isNotEmpty())
+                return ['x'=>$tag->tag,'y'=>
+                    $tag->items->reduce(function (?int $carry, $item) {
+                        return $carry + $item->inventories->sum('amount');
+                    })];
+            return ['x'=>$tag->tag,'y'=>0];
+        });
+        return compact('data');
+    }
+
+    public function api_tag_items($tag)
+    {
+        $checked = Tag::where('tag',$tag)->get()->first()->items->map(function ($item) {
+            return ['id'=>$item->id,'item'=>$item->item];
+        });
+        dd($checked);
+        $existings = Item::orderBy('item')->get();
+        dd($existings);
+
+        // if($tag->tags->pluck('id')->diff(Tag::wherein('tag',$request->input('tags'))->pluck('id'))->isNotEmpty())
+        //     $tag->tags()->syncWithPivotValues($tag->tags->pluck('id')->diff(Tag::wherein('tag',$request->input('tags'))->pluck('id')),['deleted_at'=>Carbon::now()],false);
+        // if(Tag::wherein('tag',$request->input('tags'))->pluck('id')->diff($tag->tags->pluck('id')->isNotEmpty()))
+        //     $tag->tags()->sync(Tag::wherein('tag',$request->input('tags'))->pluck('id')->diff($tag->tags->pluck('id')),false);
+        return compact('data');
     }
 }

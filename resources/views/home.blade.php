@@ -77,16 +77,8 @@
                         <div class="col">
                             <div id="chart3"></div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <div id="zoomablechart"></div>
-                        </div>
-
-                    </div>
-                    
-                </div>
-                
+                    </div>                    
+                </div>                
             </div>
         </div>
     </div>
@@ -102,31 +94,27 @@
         }
         getPaymentsLastMonth(headers)
         getPaymentsLastSixMonth(headers)
+        getCurrentGoods(headers)
+        getTagGoods(headers)
         Echo.channel('payment-registered')
         .listen('PaymentRegisteredEvent', (e)=>{
             getPaymentsLastMonth(headers)
         });
 
-        var options = {
-            chart: {
-                type: 'line'
-            },
-            series: [{
-                name: 'sales',
-                data: []
-            }],
-            xaxis: {
-                categories: []
-            }
-        }
+        Echo.channel('payment-registered')
+        .listen('PaymentRegisteredEvent', (e)=>{
+            getPaymentsLastSixMonth(headers)
+        });
 
-        var chart = new ApexCharts(document.querySelector("#chart"), options);
-        var chart1 = new ApexCharts(document.querySelector("#chart1"), options);
-        var chart2 = new ApexCharts(document.querySelector("#chart2"), options);
+        Echo.channel('payment-registered')
+        .listen('PaymentRegisteredEvent', (e)=>{
+            getCurrentGoods(headers)
+        });
 
-        chart.render();
-        chart1.render();
-        chart2.render();
+        Echo.channel('payment-registered')
+        .listen('PaymentRegisteredEvent', (e)=>{
+            getTagGoods(headers)
+        });
     });
 
     function getPaymentsLastMonth(headers){
@@ -193,6 +181,60 @@
                 }
                 var chart3 = new ApexCharts(document.querySelector("#chart3"), options3);
                 chart3.render();
+            }
+        })
+    }
+
+    function getCurrentGoods(headers){
+        $.ajax({
+            url: route('inventory.api_current_goods'),
+            headers: headers,
+            success: function (response) {
+                var options = {
+                    chart: {
+                        type: 'bar',
+                        events: {
+                            dataPointSelection: function(event, response, config) {
+                                window.location = '/item/'+response.data.twoDSeriesX[config.dataPointIndex]+'/edit'
+                            }
+                        }
+                    },
+                    plotOptions: {
+                        bar: {
+                            horizontal: true
+                        }
+                    },
+                    series: [{data: response.data}],                    
+                }
+                var chart2 = new ApexCharts(document.querySelector("#chart2"), options);
+                chart2.render();
+            }
+        })
+    }
+
+    function getTagGoods(headers){
+        $.ajax({
+            url: route('tag.api_current_tag_goods'),
+            headers: headers,
+            success: function (response) {
+                var options = {
+                    chart: {
+                        type: 'bar',
+                        events: {
+                            dataPointSelection: function(event, response, config) {
+                                window.location = '/tag/'+response.data.twoDSeriesX[config.dataPointIndex]+'/edit'
+                            }
+                        }
+                    },
+                    plotOptions: {
+                        bar: {
+                            horizontal: true
+                        }
+                    },
+                    series: [{data: response.data}],                    
+                }
+                var chart1 = new ApexCharts(document.querySelector("#chart1"), options);
+                chart1.render();
             }
         })
     }

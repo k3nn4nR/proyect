@@ -86,4 +86,13 @@ class InventoryController extends Controller
         dd(Item::where('item',$search)->get()->first());
         dd(Type::where('type',$search)->get()->first());
     }
+
+    public function api_current_goods()
+    {
+        $items = Item::with('inventories')->get();
+        $data = $items->map(function ($item) {
+            return ['x'=>$item->item,'y'=>$item->inventories->sum('amount')];
+        });
+        return compact('data');
+    }
 }
